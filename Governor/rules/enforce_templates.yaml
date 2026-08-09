@@ -1,0 +1,16 @@
+id: enforce_templates
+version: "2.0.0"
+tier: warning
+name: Enforce Template Usage
+description: Ensure all new rules follow the universal_rule.yaml.tpl template format
+trigger:
+  hook: PreToolUse
+  tool: edit
+check:
+  condition:
+    field: "tool_input"
+    operator: "path_contains"
+    pattern: "rules"
+action: enforce_templates
+params:
+  reason: "Rules should follow universal_rule.yaml.tpl template format. Use the template and ensure all required fields are present."

@@ -1,0 +1,16 @@
+id: enforce_templates_post
+version: "1.0.0"
+tier: warning
+name: Enforce Template Usage (Post-Validation)
+description: Validate rule files against template format after edits for audit trail
+trigger:
+  hook: PostToolUse
+  tool: edit
+check:
+  condition:
+    field: "tool_input"
+    operator: "path_contains"
+    pattern: "rules"
+action: enforce_templates
+params:
+  reason: "Post-edit template validation for audit trail"

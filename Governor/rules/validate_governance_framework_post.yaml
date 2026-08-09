@@ -1,0 +1,17 @@
+id: validate_governance_framework_post
+version: "1.0.0"
+tier: warning
+name: Validate Governance Framework (Post-Validation)
+description: Validate Governor framework integrity after edits to framework files
+trigger:
+  hook: PostToolUse
+  tool: edit
+check:
+  condition:
+    field: "tool_input"
+    operator: "path_contains"
+    pattern: "Governor"
+action: validate_governance
+params:
+  scope: post_edit
+  reason: "Post-edit framework validation for audit trail"

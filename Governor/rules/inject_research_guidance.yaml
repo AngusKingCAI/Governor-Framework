@@ -1,0 +1,10 @@
+id: inject_research_guidance
+version: "1.0.0"
+tier: warning
+name: inject_research_guidance
+description: Inject research-first guidance when user asks questions
+trigger:
+  hook: UserPromptSubmit
+action: inject_research_guidance
+params:
+  reason: "Question detected - inject research-first approach guidance"

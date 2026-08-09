@@ -1,0 +1,10 @@
+id: check_dependencies
+version: "1.0.0"
+tier: warning
+name: check_dependencies
+description: Check if required Governor dependencies are installed on session start
+trigger:
+  hook: SessionStart
+action: check_dependencies
+params:
+  reason: "Verify required dependencies (pyyaml, jsonschema, ruff) are available"

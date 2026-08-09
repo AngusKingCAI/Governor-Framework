@@ -1,0 +1,17 @@
+id: block_hooks_config
+version: "1.0.0"
+tier: blocking
+name: block_hooks_config
+description: Blocks editing of hooks.v1.json configuration file
+trigger:
+  hook: PreToolUse
+  tool: edit
+check:
+  condition:
+    field: "tool_input"
+    operator: "equals"
+    pattern: "hooks.v1.json"
+action: block_hooks_config
+params:
+  reason: "Editing hooks.v1.json configuration is blocked to prevent hook disruption"
+  allow_bypass: true

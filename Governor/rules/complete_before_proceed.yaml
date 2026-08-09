@@ -1,0 +1,12 @@
+id: complete_before_proceed
+version: "2.0.0"
+tier: blocking
+name: Complete Before Proceed
+description: Ensure full functionality testing before moving to next file edit using state machine compliance tracking
+trigger:
+  hook: PreToolUse
+  tool: edit
+action: complete_before_proceed
+params:
+  reason: "Must complete and test current file changes before editing another file. Use state machine compliance system to track completion."
+  allow_bypass: true

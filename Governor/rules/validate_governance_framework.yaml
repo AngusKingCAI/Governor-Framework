@@ -1,0 +1,11 @@
+id: validate_governance_framework
+version: "1.0.0"
+tier: warning
+name: validate_governance_framework
+description: Validate Governor framework integrity on session start
+trigger:
+  hook: SessionStart
+action: validate_governance
+params:
+  scope: session_start
+  reason: "Framework integrity validation on session start"

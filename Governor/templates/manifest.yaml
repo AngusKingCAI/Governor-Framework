@@ -1,0 +1,108 @@
+# Template Manifest for Governor.py v1.5
+# This file defines available templates for code generation actions
+
+version: "1.0.0"
+templates:
+  - id: python_service
+    name: Python Service Template
+    description: Generates a Python service with FastAPI
+    file: python_service.py.tpl
+    language: python
+    framework: fastapi
+    variables:
+      - name: service_name
+        type: string
+        description: Name of the service
+        required: true
+      - name: service_port
+        type: integer
+        description: Port for the service
+        default: 8000
+      - name: enable_auth
+        type: boolean
+        description: Enable authentication
+        default: false
+
+  - id: python_module
+    name: Python Module Template
+    description: Generates a Python module with basic structure
+    file: python_module.py.tpl
+    language: python
+    framework: none
+    variables:
+      - name: module_name
+        type: string
+        description: Name of the module
+        required: true
+      - name: include_tests
+        type: boolean
+        description: Include test file
+        default: true
+
+  - id: architect_rule
+    name: Architect Rule Template
+    description: Generates an architect-specific rule YAML
+    file: architect_rule.yaml.tpl
+    language: yaml
+    framework: governor
+    variables:
+      - name: rule_name
+        type: string
+        description: Name of the rule
+        required: true
+      - name: domain
+        type: string
+        description: Domain for the rule
+        default: planning
+      - name: description
+        type: string
+        description: Rule description
+        required: true
+      - name: reason
+        type: string
+        description: Block reason
+        required: true
+
+  - id: planner_rule
+    name: Planner Rule Template
+    description: Generates a planner-specific rule YAML
+    file: planner_rule.yaml.tpl
+    language: yaml
+    framework: governor
+    variables:
+      - name: rule_name
+        type: string
+        description: Name of the rule
+        required: true
+      - name: tier
+        type: string
+        description: Rule tier (blocking, warning, observational)
+        default: warning
+      - name: description
+        type: string
+        description: Rule description
+        required: true
+      - name: reason
+        type: string
+        description: Block reason
+        required: true
+
+  - id: executor_rule
+    name: Executor Rule Template
+    description: Generates an executor-specific rule YAML
+    file: executor_rule.yaml.tpl
+    language: yaml
+    framework: governor
+    variables:
+      - name: rule_name
+        type: string
+        description: Name of the rule
+        required: true
+      - name: description
+        type: string
+        description: Rule description
+        required: true
+      - name: reason
+        type: string
+        description: Block reason
+        required: true

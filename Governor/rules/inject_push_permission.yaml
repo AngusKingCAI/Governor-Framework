@@ -1,0 +1,10 @@
+id: inject_push_permission
+version: "1.0.0"
+tier: warning
+name: inject_push_permission
+description: Inject push permission when user explicitly requests git push
+trigger:
+  hook: UserPromptSubmit
+action: inject_push_permission
+params:
+  reason: "Explicit git push request detected - allow push operations"
