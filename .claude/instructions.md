@@ -64,6 +64,31 @@
 - Layer boundaries may have violations
 - CLI-agnostic support needs to be added
 
+## Design Review Task
+
+**Your primary task:** Conduct a comprehensive design review of the Governor Framework architecture.
+
+**Read the design review prompt:** First, read the file at `Governor/design_review_prompt.txt` which contains detailed instructions for the analysis.
+
+**Focus areas from the prompt:**
+- Modularity & standardization analysis
+- Layer-by-layer functionality review
+- State machine deep dive (addressing whether it's functioning as intended)
+- CLI agnosticism gaps
+- Error handling & resilience
+- Testing & verification gaps
+- Code quality & maintainability
+- Security concerns
+
+**Expected output from the prompt:**
+1. High-level architecture assessment
+2. Layer-by-layer analysis with specific issues
+3. State machine deep dive (detailed analysis of compliance state machine functionality)
+4. Critical issues that must be fixed
+5. Prioritized improvement recommendations
+6. Testing priorities (what should be tested first)
+7. Modularity gaps identification
+
 ## Testing-First Approach
 
 **Never implement without a test plan:** Before making any changes, create a test plan to verify the change works correctly.
@@ -112,9 +137,11 @@ Governor/
 
 **No build process:** This is a Python framework with no compilation step.
 
-**Current focus:** Establishing proper testing procedures before implementing new features.
+**Current focus:** Conducting comprehensive design review before implementing new features.
 
 ## Working Style
+
+**Read the design review prompt first:** Always start by reading `Governor/design_review_prompt.txt` to understand the full analysis requirements.
 
 **Plan before implement:** Always ask Claude to describe its approach before making changes. Wait for approval before proceeding.
 
