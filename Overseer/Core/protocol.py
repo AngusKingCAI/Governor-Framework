@@ -50,11 +50,60 @@ Usage:
 
 Dependencies:
 - No imports from other Overseer files (Layer Independence)
-- Standard library only (typing module)
+- Standard library only (typing, json, os, sys, datetime, uuid modules)
 """
 
 from typing import TypedDict, NotRequired, Dict, Any, Optional
 import uuid
+import json
+import os
+import sys
+from datetime import datetime
+
+# Get protocol module directory for logging
+PROTOCOL_DIR = os.path.dirname(os.path.abspath(__file__))
+OVERSEER_ROOT = os.path.dirname(PROTOCOL_DIR)
+
+
+def log_protocol_event(component: str, data: Dict[str, Any]):
+    """
+    Write protocol-specific events to daily JSONL log file.
+    
+    Modular logging approach: protocol module has its own logging function
+    for fault isolation. If logging fails here, other modules continue working.
+    
+    Args:
+        component: Protocol component name (e.g., "protocol_init", "event_creation")
+        data: Data to log as JSON
+    """
+    try:
+        log_dir = os.path.join(OVERSEER_ROOT, "logs")
+        os.makedirs(log_dir, exist_ok=True)
+
+        today = datetime.utcnow().strftime("%m-%d-%Y")
+        log_file = os.path.join(log_dir, f"Protocol-Log-{today}.jsonl")
+
+        entry = {
+            "File": "protocol.py",
+            "component": component,
+            "Time": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3],
+            "trace_id": data.get("trace_id", str(uuid.uuid4())),
+            "data": data,
+        }
+
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(json.dumps(entry) + "\n")
+            f.flush()
+
+    except Exception as e:
+        # Silent failure - logging errors shouldn't crash the protocol module
+        # Modular logging ensures other modules continue working
+        try:
+            # Fallback: attempt to write to stderr as last resort
+            print(f"Logging failed in protocol.py: {e}", file=sys.stderr)
+        except Exception:
+            # Ultimate fallback - silently fail
+            pass
 
 
 # =============================================================================
@@ -92,6 +141,14 @@ class StandardEvent:
         self.data = data
         self.metadata = metadata or {}
         self.trace_id = trace_id or str(uuid.uuid4())
+        
+        # Log event creation
+        log_protocol_event("event_creation", {
+            "event_type": event_type,
+            "source": source,
+            "trace_id": self.trace_id,
+            "data_keys": list(data.keys()) if isinstance(data, dict) else "non_dict"
+        })
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert event to dictionary for serialization."""
@@ -575,6 +632,13 @@ EVENT_TYPES = {
     # Extensible Event (for CLI-specific events)
     "extensible": ExtensibleEvent,
 }
+
+# Log protocol initialization
+log_protocol_event("protocol_init", {
+    "event": "protocol_layer_initialized",
+    "event_types_count": len(EVENT_TYPES),
+    "event_types": list(EVENT_TYPES.keys())
+})
 
 
 # =============================================================================
