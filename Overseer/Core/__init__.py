@@ -6,5 +6,6 @@ Provides the main Overseer entry point for hook communication.
 """
 
 from .overseer import Overseer
+from .protocol import StandardEvent
 
-__all__ = ["Overseer"]
+__all__ = ["Overseer", "StandardEvent"]

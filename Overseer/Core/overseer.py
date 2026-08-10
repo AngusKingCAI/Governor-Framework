@@ -14,8 +14,10 @@ import json
 import os
 import sys
 import uuid
+import importlib
 from datetime import datetime
 from typing import Dict, Any, Optional, Callable
+from .protocol import StandardEvent
 
 # Get Overseer package root
 OVERSEER_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -60,21 +62,25 @@ def get_adapter(adapter_name: str):
         if OVERSEER_ROOT not in sys.path:
             sys.path.insert(0, OVERSEER_ROOT)
         
+        # Define allowlist of allowed adapters from config
+        ALLOWED_ADAPTERS = {"devin", "claude", "cursor", "vscode"}
+        
+        # Validate adapter name against allowlist
+        if adapter_name not in ALLOWED_ADAPTERS:
+            log_execution("adapter", {"event": "adapter_not_allowed", "adapter": adapter_name})
+            raise ValueError(f"Adapter '{adapter_name}' is not in the allowlist")
+        
         # Import adapter from Adapter directory
         if adapter_name == "devin":
             from Overseer.Adapter.devin_adapter import DevinAdapter
             return DevinAdapter()
         else:
-            # Try to dynamically load adapter
-            module_name = f"{adapter_name}_adapter"
+            # Try to dynamically load adapter with allowlist validation
+            module_name = f"Overseer.Adapter.{adapter_name}_adapter"
             adapter_class_name = f"{adapter_name.capitalize()}Adapter"
             
-            # Add adapter path to sys.path
-            adapter_path = os.path.join(OVERSEER_ROOT, "Adapter")
-            if adapter_path not in sys.path:
-                sys.path.insert(0, adapter_path)
-            
-            module = __import__(module_name)
+            # Use importlib instead of __import__ for security
+            module = importlib.import_module(module_name)
             adapter_class = getattr(module, adapter_class_name)
             return adapter_class()
     except ImportError as e:
@@ -121,43 +127,6 @@ def log_execution(component: str, data: Dict[str, Any]):
         except Exception:
             # Ultimate fallback - silently fail
             pass
-
-
-class StandardEvent:
-    """
-    Standardized event format for CLI/program agnostic processing.
-    
-    Transport-specific adapters convert their native format to this
-    standard format for unified processing.
-    """
-    
-    def __init__(
-        self,
-        event_type: str,
-        source: str,
-        timestamp: str,
-        data: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None,
-        trace_id: Optional[str] = None
-    ):
-        self.event_type = event_type  # e.g., "pre_tool_use", "post_tool_use", "permission_request"
-        self.source = source  # e.g., "devin", "claude", "cursor"
-        self.timestamp = timestamp
-        self.data = data  # The original payload data
-        self.metadata = metadata or {}
-        self.trace_id = trace_id or str(uuid.uuid4())
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert event to dictionary for serialization."""
-        return {
-            "event_type": self.event_type,
-            "source": self.source,
-            "timestamp": self.timestamp,
-            "data": self.data,
-            "metadata": self.metadata,
-            "trace_id": self.trace_id
-        }
-
 
 class Overseer:
     """
@@ -288,12 +257,24 @@ def main():
         
         hook_name = sys.argv[1]
         
-        # Read JSON payload from stdin
+        # Check if stdin contains valid hook JSON before consuming it
+        # This preserves TTY for interactive tools that need stdin
         try:
-            payload = json.loads(sys.stdin.read() or "{}")
-        except json.JSONDecodeError as e:
-            log_execution("error", {"event": "invalid_json", "error": str(e)})
-            sys.exit(1)
+            stdin_content = sys.stdin.read()
+            if not stdin_content.strip():
+                # Empty stdin - not a hook event, don't process
+                sys.exit(0)
+            
+            payload = json.loads(stdin_content)
+            
+            # Validate that this looks like hook data by checking for expected fields
+            if not isinstance(payload, dict):
+                # Not a valid hook payload, don't process
+                sys.exit(0)
+                
+        except json.JSONDecodeError:
+            # Invalid JSON - not a hook event, don't process
+            sys.exit(0)
         
         trace_id = str(uuid.uuid4())
         

@@ -9,7 +9,7 @@ import json
 import os
 from datetime import datetime
 from typing import Dict, Any
-from ..Core.overseer import StandardEvent
+from ..Core.protocol import StandardEvent
 
 
 def log_adapter_event(component: str, data: Dict[str, Any]):
