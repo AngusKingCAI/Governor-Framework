@@ -1,6 +1,6 @@
 # Subagent Orchestration Guidelines
 
-This document provides detailed guidance for implementing the Governor Framework workflow using modern AI agent subagent capabilities for parallel execution and complex orchestration.
+This document provides detailed guidance for implementing the Overseer Framework workflow using modern AI agent subagent capabilities for parallel execution and complex orchestration.
 
 ## When to Use Parallel Execution
 
@@ -225,7 +225,7 @@ Create custom profiles for specialized domains:
 
 ### Hook-Based Enforcement
 
-**Use existing Governor hooks at:**
+**Use existing Overseer hooks at:**
 - **Phase transitions**: Prevent advancement without proper completion
 - **Subagent spawning**: Validate subagent selection and configuration
 - **Result synthesis**: Ensure synthesis follows governance rules
@@ -326,10 +326,13 @@ Before implementing subagent orchestration:
 - [ ] Implement result synthesis logic
 - [ ] Set up cost monitoring and thresholds
 - [ ] Define iteration limits and escalation procedures
-- [ ] Integrate with Governor hooks for enforcement
+- [ ] Integrate with Overseer hooks for enforcement
 - [ ] Configure state machine tracking
 - [ ] Set up audit trail capture for all subagent activities
 - [ ] Create orchestrator skills with proper frontmatter
 - [ ] Document patterns and decision logic
 - [ ] Test error recovery scenarios
 - [ ] Validate cost management effectiveness
+- [ ] Add comprehensive logging to all subagent implementations following standardized JSONL format
+- [ ] Ensure subagent logging follows layer-specific log file conventions
+- [ ] Include silent failure handling for all logging operations

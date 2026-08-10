@@ -5,7 +5,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "python Governor/governor.py SessionStart"
+          "command": "python Overseer/Core/overseer.py SessionStart"
         }
       ]
     }
@@ -16,7 +16,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "python Governor/governor.py UserPromptSubmit"
+          "command": "python Overseer/Core/overseer.py UserPromptSubmit"
         }
       ]
     }
@@ -27,7 +27,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "python Governor/governor.py PreToolUse"
+          "command": "python Overseer/Core/overseer.py PreToolUse"
         }
       ]
     }
@@ -38,7 +38,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "python Governor/governor.py PostToolUse"
+          "command": "python Overseer/Core/overseer.py PostToolUse"
         }
       ]
     }
@@ -49,7 +49,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "python Governor/governor.py PermissionRequest"
+          "command": "python Overseer/Core/overseer.py PermissionRequest"
         }
       ]
     }
@@ -60,7 +60,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "python Governor/governor.py Stop"
+          "command": "python Overseer/Core/overseer.py Stop"
         }
       ]
     }
@@ -71,7 +71,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "python Governor/governor.py SessionEnd"
+          "command": "python Overseer/Core/overseer.py SessionEnd"
         }
       ]
     }
@@ -82,7 +82,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "python Governor/governor.py PostCompaction"
+          "command": "python Overseer/Core/overseer.py PostCompaction"
         }
       ]
     }

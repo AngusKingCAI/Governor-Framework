@@ -1,6 +1,6 @@
-# Governor Framework Development Workflow
+# Overseer Framework Development Workflow
 
-This document defines the optimized governance workflow used for all Governor Framework development tasks to ensure enterprise compliance and auditability. The workflow leverages Devin CLI subagent capabilities for parallel execution and complex orchestration.
+This document defines the optimized governance workflow used for all Overseer Framework development tasks to ensure enterprise compliance and auditability. The workflow leverages Devin CLI subagent capabilities for parallel execution and complex orchestration.
 
 ## Workflow Architecture
 
@@ -16,7 +16,7 @@ The workflow uses a **hybrid pattern** combining:
 Starting point from user request. All development tasks begin with a clear user prompt defining the requirements.
 
 ### 2. CLARIFY_INTENT
-Ensure understanding of requirements before proceeding. The agent must confirm it understands what is being requested.
+Ensure understanding of requirements before proceeding. The agent must confirm it understands what is being requested. Use the ask_user_question tool for structured clarification with multiple-choice options when seeking user input on requirements, scope, or approach decisions.
 
 ### 3. PARALLEL_INITIALIZATION (Background Subagents)
 Spawn parallel background subagents for independent analysis:
@@ -39,7 +39,7 @@ Spawn parallel background subagents for independent analysis:
 Parent agent synthesizes results from both parallel subagents:
 - Combine risk classification with boundary definitions
 - Ensure boundaries are appropriate for risk level
-- Present combined initialization for user approval
+- Present combined initialization for user approval using ask_user_question tool for structured feedback
 
 ## Planning Phase
 
@@ -58,7 +58,7 @@ Parent agent synthesizes research findings:
 - Create unified research summary with evidence
 
 ### 7. VERIFY_RESEARCH
-Present synthesized research findings for user approval with supporting evidence. User must approve before proceeding.
+Present synthesized research findings for user approval with supporting evidence. Use ask_user_question tool for structured approval process. User must approve before proceeding.
 
 ### 8. PLAN
 Create implementation strategy based on approved research. Plan must be detailed and actionable with explicit dependencies.
@@ -73,7 +73,7 @@ Automated quality checks on plan:
 **Iteration Loop**: If evaluation gate fails, loop back to step 8 (PLAN) with specific feedback. Maximum 3 iterations to prevent runaway loops.
 
 ### 10. VERIFY_PLAN
-Present implementation plan for user approval with evaluation results. User must approve before implementation.
+Present implementation plan for user approval with evaluation results. Use ask_user_question tool for structured approval process. User must approve before implementation.
 
 ## Implementation Phase
 
@@ -95,7 +95,7 @@ Parent agent synthesizes validation results:
 - Create unified validation report
 
 ### 14. SUMMARIZE_IMPLEMENTATION
-Present implementation changes and validation synthesis for user verification. User must review and approve changes.
+Present implementation changes and validation synthesis for user verification. Use ask_user_question tool for structured review and approval process. User must review and approve changes.
 
 ### 15. EVALUATION_GATE (Iteration Loop)
 Automated quality checks on implementation:
@@ -124,7 +124,7 @@ Parent agent synthesizes test results:
 - Create unified test report with coverage metrics
 
 ### 18. SUMMARIZE_TEST_RESULTS
-Present synthesized test outcomes for user verification. User must review test results.
+Present synthesized test outcomes for user verification. Use ask_user_question tool for structured review process. User must review test results.
 
 ### 19. EVALUATION_GATE (Iteration Loop)
 Automated quality checks on tests:
@@ -152,7 +152,7 @@ Parent/coordinator agent synthesizes review findings:
 - Create unified review report
 
 ### 22. SUMMARIZE_REVIEW
-Present synthesized review findings for final user approval. User must approve final work.
+Present synthesized review findings for final user approval. Use ask_user_question tool for structured final approval process. User must approve final work.
 
 ### 23. PROOF_BUNDLE_GENERATION
 Create immutable proof bundle containing:
@@ -187,8 +187,9 @@ Task completion after user approval and proof bundle verification. Only then is 
 - **Immutable audit trail**: Audit trail is hash-verified and tamper-evident
 - **Proof bundles**: Enable regulatory compliance and audit reconstruction with full provenance
 - **Risk-based governance**: Risk classification determines required governance rigor
-- **Agent-agnostic design**: Governor Framework state machine supports different workflows
+- **Agent-agnostic design**: Overseer Framework state machine supports different workflows
 - **Cost-aware parallelism**: Subagent usage is deliberate and justified by parallel benefits
+- **Comprehensive logging**: All implementations must include standardized logging to layer-specific JSONL files with consistent format and silent failure handling
 
 ## Risk-Based Controls
 
@@ -211,11 +212,11 @@ The workflow leverages modern AI agent capabilities:
 - **Custom subagent profiles** for specialized analysis (risk, compliance, security)
 - **Managed agents** for complex parallel review workflows
 - **Iteration loops** implemented through skill orchestration logic
-- **Governor Framework hooks** for enforcement at critical transition points
+- **Overseer Framework hooks** for enforcement at critical transition points
 
 ## Enforcement Mechanism
 
-The existing Governor Framework is used to enforce adherence to this workflow through:
+The existing Overseer Framework is used to enforce adherence to this workflow through:
 - Hook-based interception at critical transition points
 - State machine tracking of workflow phase progression with subagent coordination
 - Automatic validation of evaluation gate requirements and iteration limits
@@ -223,4 +224,4 @@ The existing Governor Framework is used to enforce adherence to this workflow th
 - Proof bundle generation and verification with parallel execution provenance
 - Cost monitoring and alerting for subagent usage
 
-This creates a self-governing system where the current Governor enforces the improved workflow for building the next version of Governor, leveraging modern parallel execution capabilities while maintaining strict compliance.
+This creates a self-governing system where the current Overseer enforces the improved workflow for building the next version of Overseer, leveraging modern parallel execution capabilities while maintaining strict compliance.
