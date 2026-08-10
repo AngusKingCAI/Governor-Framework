@@ -15,10 +15,39 @@ The workflow uses a **hybrid pattern** combining:
 ### 1. USER_PROMPT
 Starting point from user request. All development tasks begin with a clear user prompt defining the requirements.
 
-### 2. CLARIFY_INTENT
-Ensure understanding of requirements before proceeding. The agent must confirm it understands what is being requested. Use the ask_user_question tool for structured clarification with multiple-choice options when seeking user input on requirements, scope, or approach decisions.
+### 2. RESEARCH_BEST_PRACTICES
+Research industry best practices, architectural patterns, and implementation approaches relevant to the implementation type. This research provides context for informed clarification questions.
 
-### 3. PARALLEL_INITIALIZATION (Background Subagents)
+**Research Scope:**
+- Domain-specific architectural patterns and design principles
+- Industry standards and conventions for the implementation type
+- Security and performance considerations
+- Modularity and maintainability best practices
+- File structure and organization patterns
+
+**Research Method:**
+- Use web search to find current best practices
+- Reference established design patterns and architectural principles
+- Consider project-specific constraints and requirements
+- Document key findings to inform clarification process
+
+### 3. CLARIFY_INTENT
+Ensure complete understanding of requirements before proceeding. The agent must iteratively ask pertinent questions until the user is 100% satisfied with clarity on all aspects of the implementation.
+
+**Iterative Clarification Process:**
+- Use ask_user_question tool for structured clarification with multiple-choice options
+- Ask questions relevant to requirements, scope, approach, dependencies, and constraints
+- Use research findings to inform question formulation and provide context for decisions
+- Continue asking questions until user explicitly confirms satisfaction
+- Address gaps, ambiguities, and uncertainties through targeted questioning
+- Document key decisions and clarifications for reference in subsequent steps
+
+**Exit Condition:**
+- User explicitly confirms all requirements are clear and understood
+- No remaining ambiguities or uncertainties
+- Implementation scope and approach are fully defined
+
+### 4. PARALLEL_INITIALIZATION (Background Subagents)
 Spawn parallel background subagents for independent analysis:
 - **Subagent A**: RISK_CLASSIFICATION - Classify task risk level (Low/Medium/Critical) based on:
   - Data access requirements (PII, production data, customer data)
@@ -35,7 +64,7 @@ Spawn parallel background subagents for independent analysis:
 
 **Parallel Execution**: Both subagents run simultaneously, parent agent collects results when both complete.
 
-### 4. SYNTHESIZE_INITIALIZATION
+### 5. SYNTHESIZE_INITIALIZATION
 Parent agent synthesizes results from both parallel subagents:
 - Combine risk classification with boundary definitions
 - Ensure boundaries are appropriate for risk level
@@ -43,118 +72,127 @@ Parent agent synthesizes results from both parallel subagents:
 
 ## Planning Phase
 
-### 5. PARALLEL_RESEARCH (Background Subagents)
+### 6. PARALLEL_RESEARCH (Background Subagents)
 Spawn parallel research subagents for different research aspects:
-- **Subagent A**: Technical research - Existing solutions, best practices, technical feasibility
-- **Subagent B**: Compliance research - Regulatory requirements, industry standards, legal considerations
-- **Subagent C**: Risk analysis - Security implications, data handling, third-party dependencies
+- **Subagent A**: Technical research - Existing solutions, best practices, technical feasibility, domain-specific architectural patterns
+- **Subagent B**: Compliance research - Regulatory requirements, industry standards, legal considerations, implementation-specific standards
+- **Subagent C**: Risk analysis - Security implications, data handling, third-party dependencies, domain-specific security considerations
 
 **Parallel Execution**: All research subagents run simultaneously, each focused on specific domain.
 
-### 6. SYNTHESIZE_RESEARCH
+### 7. SYNTHESIZE_RESEARCH
 Parent agent synthesizes research findings:
 - Combine results from all research subagents
 - Identify conflicts or gaps in research
 - Create unified research summary with evidence
 
-### 7. VERIFY_RESEARCH
+### 8. VERIFY_RESEARCH
 Present synthesized research findings for user approval with supporting evidence. Use ask_user_question tool for structured approval process. User must approve before proceeding.
 
-### 8. PLAN
+### 9. PLAN
 Create implementation strategy based on approved research. Plan must be detailed and actionable with explicit dependencies.
 
-### 9. EVALUATION_GATE (Iteration Loop)
+### 10. EVALUATION_GATE (Iteration Loop)
 Automated quality checks on plan:
 - **Completeness**: Are all required components addressed?
 - **Feasibility**: Is the plan technically achievable?
 - **Risk alignment**: Does the plan match the risk classification?
 - **Dependency validation**: Are dependencies explicit and achievable?
+- **Modularity**: Does the plan maintain proper separation of concerns and correct dependency direction?
+- **Extensibility**: Does the plan support future growth and plugin architecture?
 
-**Iteration Loop**: If evaluation gate fails, loop back to step 8 (PLAN) with specific feedback. Maximum 3 iterations to prevent runaway loops.
+**Iteration Loop**: If evaluation gate fails, loop back to step 9 (PLAN) with specific feedback. Maximum 3 iterations to prevent runaway loops.
 
-### 10. VERIFY_PLAN
+### 11. VERIFY_PLAN
 Present implementation plan for user approval with evaluation results. Use ask_user_question tool for structured approval process. User must approve before implementation.
 
 ## Implementation Phase
 
-### 11. IMPLEMENT
-Execute implementation based on approved plan with version control. All changes must be tracked.
+### 12. IMPLEMENT
+Execute implementation based on approved plan with version control. All changes must be tracked. 
+For implementations requiring refactoring of existing code:
+- Update dependency imports and cross-file references
+- Maintain backward compatibility during migration
+- Document refactoring changes in commit messages
+- Test refactored code paths before proceeding
 
-### 12. PARALLEL_VALIDATION (Background Subagents)
+### 13. PARALLEL_VALIDATION (Background Subagents)
 Spawn parallel validation subagents:
-- **Subagent A**: Code quality validation - Standards compliance, formatting, best practices
-- **Subagent B**: Compliance validation - Governance rules, boundary adherence, security requirements
-- **Subagent C**: Dependency validation - Import correctness, package compatibility, version conflicts
+- **Subagent A**: Code quality validation - Standards compliance, formatting, best practices, architectural consistency
+- **Subagent B**: Compliance validation - Governance rules, boundary adherence, security requirements, implementation-specific compliance
+- **Subagent C**: Dependency validation - Import correctness, package compatibility, version conflicts, cross-component dependency verification
 
 **Parallel Execution**: All validation subagents run simultaneously, each focused on specific validation domain.
 
-### 13. SYNTHESIZE_VALIDATION
+### 14. SYNTHESIZE_VALIDATION
 Parent agent synthesizes validation results:
 - Combine findings from all validation subagents
 - Identify critical issues vs. warnings
 - Create unified validation report
 
-### 14. SUMMARIZE_IMPLEMENTATION
+### 15. SUMMARIZE_IMPLEMENTATION
 Present implementation changes and validation synthesis for user verification. Use ask_user_question tool for structured review and approval process. User must review and approve changes.
 
-### 15. EVALUATION_GATE (Iteration Loop)
+### 16. EVALUATION_GATE (Iteration Loop)
 Automated quality checks on implementation:
 - **Code quality**: Does code meet standards?
 - **Compliance**: Are governance rules followed?
 - **Security**: Are security requirements met?
 - **Validation synthesis**: Are all validation results acceptable?
+- **Modularity**: Does implementation maintain proper separation of concerns and correct dependency direction?
+- **Consistency**: Does implementation follow established code patterns and naming conventions?
 
-**Iteration Loop**: If evaluation gate fails, loop back to step 11 (IMPLEMENT) with specific feedback. Maximum 3 iterations.
+**Iteration Loop**: If evaluation gate fails, loop back to step 12 (IMPLEMENT) with specific feedback. Maximum 3 iterations.
 
 ## Testing Phase
 
-### 16. PARALLEL_TESTING (Background Subagents)
+### 17. PARALLEL_TESTING (Background Subagents)
 Spawn parallel testing subagents:
-- **Subagent A**: Unit testing - Individual component testing
-- **Subagent B**: Integration testing - Component interaction testing
-- **Subagent C**: Security testing - Vulnerability scanning, penetration testing
-- **Subagent D**: Performance testing - Load testing, response time validation
+- **Subagent A**: Unit testing - Individual component testing, conformance testing (type validation, schema validation, interface validation)
+- **Subagent B**: Integration testing - Component interaction testing, dependency testing (import verification, compatibility testing)
+- **Subagent C**: Security testing - Vulnerability scanning, penetration testing, domain-specific security testing
+- **Subagent D**: Performance testing - Load testing, response time validation, regression testing for refactored code
 
 **Parallel Execution**: All testing subagents run simultaneously, each focused on specific testing domain.
 
-### 17. SYNTHESIZE_TEST_RESULTS
+### 18. SYNTHESIZE_TEST_RESULTS
 Parent agent synthesizes test results:
 - Combine results from all testing subagents
 - Identify critical failures vs. warnings
 - Create unified test report with coverage metrics
 
-### 18. SUMMARIZE_TEST_RESULTS
+### 19. SUMMARIZE_TEST_RESULTS
 Present synthesized test outcomes for user verification. Use ask_user_question tool for structured review process. User must review test results.
 
-### 19. EVALUATION_GATE (Iteration Loop)
+### 20. EVALUATION_GATE (Iteration Loop)
 Automated quality checks on tests:
 - **Coverage**: Do tests cover critical paths?
 - **Thresholds**: Do tests meet quality thresholds?
 - **Regression**: Do tests prevent regressions?
 - **Test synthesis**: Are all test results acceptable?
 
-**Iteration Loop**: If evaluation gate fails, loop back to step 16 (PARALLEL_TESTING) with specific feedback. Maximum 3 iterations.
+**Iteration Loop**: If evaluation gate fails, loop back to step 17 (PARALLEL_TESTING) with specific feedback. Maximum 3 iterations.
 
 ## Review Phase
 
-### 20. COMPREHENSIVE_REVIEW (Managed Devins)
+### 21. COMPREHENSIVE_REVIEW (Managed Devins)
 For complex tasks, spawn managed Devins for specialized review:
-- **Managed Devin A**: Architecture review - Design patterns, modularity, scalability
-- **Managed Devin B**: Security review - Security posture, vulnerability assessment
-- **Managed Devin C**: Compliance review - Regulatory compliance, documentation completeness
+- **Managed Devin A**: Architecture review - Design patterns, modularity, scalability, layer placement, dependency direction, separation of concerns
+- **Managed Devin B**: Security review - Security posture, vulnerability assessment, domain-specific security considerations
+- **Managed Devin C**: Compliance review - Regulatory compliance, documentation completeness, industry standard alignment
 
 **Parallel Execution**: Managed Devins work in parallel, coordinator agent synthesizes results.
 
-### 21. SYNTHESIZE_REVIEW
+### 22. SYNTHESIZE_REVIEW
 Parent/coordinator agent synthesizes review findings:
 - Combine results from all review agents
 - Identify critical issues vs. recommendations
 - Create unified review report
 
-### 22. SUMMARIZE_REVIEW
+### 23. SUMMARIZE_REVIEW
 Present synthesized review findings for final user approval. Use ask_user_question tool for structured final approval process. User must approve final work.
 
-### 23. PROOF_BUNDLE_GENERATION
+### 24. PROOF_BUNDLE_GENERATION
 Create immutable proof bundle containing:
 - **Complete pipeline snapshot**: Versioned configuration, dependency graph
 - **All evaluation results**: Every metric score from evaluation gates with iteration history
@@ -167,7 +205,7 @@ Proof bundle enables regulatory compliance and audit reconstruction with full pr
 
 ## Completion Phase
 
-### 24. AUDIT_TRAIL_UPDATE
+### 25. AUDIT_TRAIL_UPDATE
 Update immutable audit trail with full workflow record:
 - All workflow steps with timestamps
 - Subagent execution details and results
@@ -175,7 +213,7 @@ Update immutable audit trail with full workflow record:
 - User approvals with evidence reviewed
 - Proof bundle hash and verification links
 
-### 25. COMPLETE
+### 26. COMPLETE
 Task completion after user approval and proof bundle verification. Only then is the task considered complete.
 
 ## Strict Governance Principles

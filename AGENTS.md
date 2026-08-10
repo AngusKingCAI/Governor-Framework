@@ -21,7 +21,7 @@ A framework-agnostic AI agent governance system for controlling tool usage, enfo
 
 ## Document Index
 
-- **[WORKFLOW.md](./WORKFLOW.md)**: Complete 25-step governance process with parallel execution
+- **[WORKFLOW.md](./WORKFLOW.md)**: Complete 26-step governance process with parallel execution and research-first approach
 - **[SUBAGENT_ORCHESTRATION.md](./SUBAGENT_ORCHESTRATION.md)**: Detailed subagent coordination guidelines
 - **[SOFTWARE_ENGINEERING_PRINCIPLES.md](./SOFTWARE_ENGINEERING_PRINCIPLES.md)**: Software engineering best practices and development guidelines
 
