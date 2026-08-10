@@ -23,7 +23,7 @@
   ],
   "PreToolUse": [
     {
-      "matcher": "",
+      "matcher": "^(read|edit|write|grep|glob|exec)$",
       "hooks": [
         {
           "type": "command",
@@ -34,7 +34,7 @@
   ],
   "PostToolUse": [
     {
-      "matcher": "",
+      "matcher": "^(read|edit|write|grep|glob|exec)$",
       "hooks": [
         {
           "type": "command",
@@ -45,7 +45,7 @@
   ],
   "PermissionRequest": [
     {
-      "matcher": "",
+      "matcher": "^(read|edit|write|grep|glob|exec)$",
       "hooks": [
         {
           "type": "command",
