@@ -153,6 +153,26 @@ Spawn parallel testing subagents:
 - **Subagent C**: Security testing - Vulnerability scanning, penetration testing, domain-specific security testing
 - **Subagent D**: Performance testing - Load testing, response time validation, regression testing for refactored code
 
+**Testing Best Practices for Protocol Layers:**
+- **Layered Testing Strategy**: Unit tests → Contract tests → Integration tests → End-to-end tests
+- **Schema Validation Testing**: Schema unit checks, protocol contract tests, handler unit tests
+- **Test Pyramid Pattern**: Many fast unit tests, some integration tests, few end-to-end tests
+- **Arrange-Act-Assert Structure**: Set up test data, call method under test, assert expected results
+- **Contract Testing**: Verify published schema matches handler behavior, catch registration/serialization drift
+- **Regression Testing**: Ensure refactoring preserves behavior, test import paths and compatibility
+- **Security Testing**: Validate allowlists, check dynamic imports, test input validation
+- **Performance Testing**: Verify no performance regression from refactoring, test critical paths
+
+**Protocol-Specific Test Coverage:**
+- Schema validation for all event types
+- Contract testing for protocol surface
+- Import path verification (module vs script execution)
+- Adapter translation testing (CLI-specific to universal events)
+- Backward compatibility testing
+- Extensibility testing (ExtensibleEvent schema)
+- Security validation (dynamic imports, allowlists)
+- Integration testing with hook system
+
 **Parallel Execution**: All testing subagents run simultaneously, each focused on specific testing domain.
 
 ### 18. SYNTHESIZE_TEST_RESULTS
