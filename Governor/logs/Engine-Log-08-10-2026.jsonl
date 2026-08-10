@@ -2327,3 +2327,59 @@
 {"File": "engine.py", "component": "Engine", "Time": "2026-08-10T04:03:32", "data": {"action": "rule_loaded", "file": "validate_governance_framework_post.yaml", "rule_id": "validate_governance_framework_post", "source": "universal"}}
 {"File": "engine.py", "component": "Engine", "Time": "2026-08-10T04:03:32", "data": {"action": "rule_loaded", "file": "block_app_edits.yaml", "rule_id": "block_app_edits", "source": "agent_architect"}}
 {"File": "engine.py", "component": "Engine", "Time": "2026-08-10T04:03:32", "data": {"action": "load_rules_complete", "total_rules": 12}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:02:52", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:02:52", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:02:59", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:02:59", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:02:59", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:02:59", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:02", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:02", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:02", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:02", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:10", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:10", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:11", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:11", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:14", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:14", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:14", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:14", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:15", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:15", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:16", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:16", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:29", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:29", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:32", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:32", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:32", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:32", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:46", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:46", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:51", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:51", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:51", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:03:51", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:00", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:00", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:01", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:01", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:04", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:04", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:04", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:04", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:27", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:27", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:34", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:34", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:35", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:35", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:48", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:48", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:53", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:53", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:53", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:53", "data": {"action": "load_rules_complete", "total_rules": 0}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:57", "data": {"action": "load_rules", "status": "no_dir", "source": "agent_architect", "path": "C:\\Governor Framework\\Governor\\rules\\architect"}}
+{"File": "engine.py", "component": "Engine", "Time": "2026-08-10T05:04:57", "data": {"action": "load_rules_complete", "total_rules": 0}}
