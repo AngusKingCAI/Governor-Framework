@@ -16,7 +16,6 @@ import sys
 import uuid
 from datetime import datetime
 from typing import Dict, Any, Optional, Callable
-from abc import ABC, abstractmethod
 
 # Get Overseer package root
 OVERSEER_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
