@@ -122,42 +122,36 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 2: Adapter-First Architecture
+## Principle 2: Overseer-Centric Architecture
 
-**Definition**: Adapters define their own contracts and capabilities. The framework provides a generic container that accepts whatever adapters provide, rather than defining what adapters must implement.
+**Definition**: Hooks point to overseer.py as the primary integration point. overseer.py is responsible for using adapters to determine available functionality and coordinate governance decisions.
 
 **Desired State**:
 
-### 2.1 Self-Contained Adapters
-- **Target Behavior**: Each adapter is completely self-contained
-- **Implementation**: Adapters define their own event schemas, conversion logic, and capabilities
-- **Example**: AdapterA defines its own events, AdapterB defines its own events - no shared predefined types
-- **Benefit**: Adapters can evolve independently without affecting each other
+### 2.1 Overseer as Integration Point
+- **Target Behavior**: Hooks point to overseer.py as the primary integration point
+- **Implementation**: overseer.py receives hook events and coordinates with adapters
+- **Example**: PreToolUse hook calls overseer.py, which then uses adapters to determine functionality
+- **Benefit**: Single integration point for all hooks, centralized governance coordination
 
-### 2.2 Dynamic Schema Definition
-- **Target Behavior**: Adapters define their own schemas dynamically
-- **Implementation**: Adapters register their schemas with the framework at runtime
-- **Example**: When an adapter loads, it declares "I handle these events with these schemas"
-- **Benefit**: Schema evolution happens at adapter level, not framework level
+### 2.2 Adapter Functionality Discovery
+- **Target Behavior**: overseer.py uses adapters to determine available functionality
+- **Implementation**: overseer.py queries adapters for capabilities and coordinates decisions
+- **Example**: overseer.py asks Devin-Adapter what tools it supports, then applies governance
+- **Benefit**: overseer.py coordinates governance while adapters provide application-specific knowledge
 
-### 2.3 Capability-Based Registration
-- **Target Behavior**: Adapters declare their capabilities, framework adapts
-- **Implementation**: Adapters register what they can do, framework routes accordingly
-- **Example**: AdapterA might support "tool_use" events, while AdapterB supports "custom_action" - framework handles both
-- **Benefit**: Framework handles heterogeneous adapter capabilities seamlessly
-
-### 2.4 Minimal Flexible Interfaces
-- **Target Behavior**: Adapter interfaces are minimal and flexible
-- **Implementation**: Base contract defines only what's absolutely necessary
-- **Example**: Base contract requires only basic lifecycle methods, not specific event handling
-- **Benefit**: Maximum flexibility for adapter implementation approaches
+### 2.3 Centralized Governance Coordination
+- **Target Behavior**: overseer.py coordinates all governance decisions
+- **Implementation**: overseer.py integrates with rule system, adapters, and hooks
+- **Example**: overseer.py receives hook event, consults rules, uses adapter context, makes decision
+- **Benefit**: Consistent governance logic across all hooks and adapters
 
 **Success Criteria**:
-- Adapters can be added without modifying framework code
-- Each adapter is completely self-contained
-- Framework works with adapters that have completely different event structures
-- Adding a new adapter type requires only creating the adapter file
-- Framework discovers adapter capabilities at runtime
+- Hooks point to overseer.py as single integration point
+- overseer.py coordinates with adapters to determine functionality
+- Governance decisions are centralized in overseer.py
+- Adapters provide application-specific knowledge to overseer.py
+- overseer.py integrates with rule system, adapters, and hooks consistently
 
 ---
 
