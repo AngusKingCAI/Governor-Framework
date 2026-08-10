@@ -4,6 +4,79 @@
 **Date**: 2026-08-10  
 **Purpose**: Define the fundamental architectural principles for true agnosticism in the Overseer Framework
 
+## Product Summary
+
+**What is Overseer?**
+
+Overseer is a hook-based governance system that intercepts AI agent tool usage and enforces policies. It provides runtime enforcement of governance rules, universal CLI support across different AI agent frameworks, and lightweight portability that can be embedded anywhere.
+
+**What is Overseer trying to achieve?**
+
+Overseer aims to solve three key problems in AI agent governance:
+
+1. **Tool Access Control**: AI agents can access tools and files inappropriately. Overseer enforces boundaries on what agents can do.
+
+2. **Compliance and Auditing**: Organizations need compliance, audit trails, and governance for AI agent actions. Overseer provides tamper-evident audit trails and comprehensive logging.
+
+3. **Cross-Framework Standardization**: Different AI agent frameworks and CLIs have different governance approaches. Overseer standardizes governance across all frameworks through a universal hook-based system.
+
+**Target Users**
+
+Overseer serves both hobbyists and enterprise users equally:
+- **Hobbyists**: Individual developers who want basic tool usage oversight and policy enforcement
+- **Enterprise**: Teams needing compliance, audit trails, and strict policy enforcement at scale
+
+**Differentiation**
+
+Overseer is unique because it provides:
+- **Runtime Enforcement**: Hook-based enforcement at the moment of action, unlike dashboard-only tools
+- **Universal CLI Support**: CLI-agnostic design works with any AI agent framework
+- **Lightweight and Portable**: Zero-dependency design allows embedding in any environment
+
+**Success Definition**
+
+Overseer succeeds when:
+- Users trust their AI agents are properly governed (trust and safety)
+- Overseer can be easily embedded in any environment (universal embeddability)
+- Overseer scales from individual developers to enterprise teams (scalable adoption)
+
+**Deployment Model**
+
+Overseer is designed for local installation - users install it locally and it hooks into their AI agent tools.
+
+**Default Behavior**
+
+When Overseer blocks an action, it creates a bypass menu for the user, allowing them to override the block when needed.
+
+**Interaction Model**
+
+Overseer uses a hybrid approach: automatic enforcement with interactive options for violations. Most decisions are enforced automatically, but users can interact when needed.
+
+**Policy Management**
+
+Users create rules as YAML files with accompanying Python files under the same name. These rules run when hooks are triggered. Examples include running ruff on Python files or forcing frontmatter on .md files.
+
+**Rule Execution**
+
+Rules run synchronously when hooks trigger. Blocks create bypass menus, while other hooks (like post-tool) check files for encoding and run tools like ruff.
+
+**File System Structure**
+
+- `/rules` directory in `/Overseer` contains user rules (initially empty, populated by user)
+- Meta rules govern rule creation and system behavior
+- Python files accompanying rules are in `Overseer/Actions`
+- Meta actions in `Overseer/Actions` enforce meta rules for the system itself
+
+**Meta Rules and Actions**
+
+Meta rules serve both purposes:
+- Govern how users create their own rules (format, structure, naming)
+- Govern the Overseer system itself (hooks, logging, configuration)
+
+Meta actions enforce the meta rules for system compliance and self-governance.
+
+---
+
 ## Principle 1: True Agnosticism
 
 **Definition**: The core framework must make ZERO assumptions about adapters or environment. The framework should not know, care about, or depend on specific adapters, CLIs, or environments.
@@ -668,14 +741,42 @@
 - Implement data sovereignty controls
 - Ensure no vendor lock-in
 
-### Phase 19: Hook Composability
+### Phase 20: Hook Composability
 - Implement hook chaining mechanisms
 - Add hook isolation
 - Create configurable hook ordering
 - Design composable hook primitives
 - Enable complex governance pipelines
 
-### Phase 20: Integration and Testing
+### Phase 21: Rule System Implementation
+- Implement YAML rule parsing and validation
+- Create Python execution file system
+- Implement synchronous hook triggering
+- Set up /rules directory structure
+- Create rule-to-action mapping
+
+### Phase 22: Meta Rules and Actions
+- Design meta rule system for rule creation governance
+- Implement meta actions for system self-governance
+- Create dual-purpose meta rules
+- Set up meta action enforcement
+- Implement meta rule validation
+
+### Phase 23: Bypass Menu System
+- Implement bypass menu creation logic
+- Create override scope options (once, session, permanent)
+- Add override logging and audit trail
+- Implement configurable bypass behavior
+- Design bypass menu UI/CLI
+
+### Phase 24: Action Organization System
+- Set up Overseer/Actions directory structure
+- Implement meta action isolation
+- Create action naming convention enforcement
+- Implement automatic action registration
+- Design action discovery mechanism
+
+### Phase 25: Integration and Testing
 - Test all principles in integration
 - Validate agnosticism goals
 - Verify modularization targets
@@ -684,10 +785,169 @@
 - Benchmark hook performance
 - Test hook reliability under failure
 - Validate scalability from hobbyist to enterprise
+- Test rule system and meta rules
+- Validate bypass menu functionality
+- Test action organization and registration
 
 ---
 
-## Principle 13: Small Reusable Kernel
+## Principle 21: Rule-Based Governance System
+
+**Definition**: Governance is implemented through YAML rule files with accompanying Python execution files. Users define policies as YAML files, and Python files execute the logic when hooks are triggered.
+
+**Desired State**:
+
+### 21.1 YAML Rule Definition
+- **Target Behavior**: Users define governance rules in YAML files
+- **Implementation**: YAML files specify rule conditions, actions, and metadata
+- **Example**: rule.yaml defines "prevent deleting important files" with Python execution logic
+- **Benefit**: Human-readable policy definition, easy to version control
+
+### 21.2 Python Execution Files
+- **Target Behavior**: Each YAML rule has a corresponding Python file with execution logic
+- **Implementation**: Python files execute when hooks trigger, implementing rule logic
+- **Example**: rule.yaml has rule.py that checks file importance and blocks deletion
+- **Benefit**: Complex logic in Python, simple configuration in YAML
+
+### 21.3 Synchronous Hook Triggering
+- **Target Behavior**: Rules run synchronously when hooks trigger
+- **Implementation**: Hook calls rule execution immediately, blocking tool execution until complete
+- **Example**: PreToolUse hook triggers rule.py synchronously before tool executes
+- **Benefit**: Governance decisions happen before tool execution
+
+### 21.4 Rule File Location
+- **Target Behavior**: User rules live in /rules directory in /Overseer
+- **Implementation**: /rules directory initially empty, populated by user with their rules
+- **Example**: User adds security_rules.yaml and security_rules.py to /rules/
+- **Benefit**: Clear separation of system rules and user rules
+
+**Success Criteria**:
+- Users can define rules in YAML format
+- Python files implement rule execution logic
+- Rules run synchronously on hook trigger
+- User rules stored in /rules directory
+- YAML and Python files follow naming convention
+
+---
+
+## Principle 22: Meta Rules and Actions
+
+**Definition**: The system includes meta rules that govern both user rule creation and system behavior. Meta actions enforce meta rules for system compliance and self-governance.
+
+**Desired State**:
+
+### 22.1 Meta Rule Governance
+- **Target Behavior**: Meta rules govern how users create their own rules
+- **Implementation**: Meta rules define rule format, structure, naming conventions
+- **Example**: Meta rules require rule.yaml to have specific required fields
+- **Benefit**: Consistent rule structure across user rules
+
+### 22.2 System Self-Governance
+- **Target Behavior**: Meta rules govern the Overseer system itself
+- **Implementation**: Meta rules define system behavior for hooks, logging, configuration
+- **Example**: Meta rules ensure all system hooks follow logging principles
+- **Benefit**: System follows its own architectural principles
+
+### 22.3 Meta Actions Execution
+- **Target Behavior**: Meta actions in Overseer/Actions enforce meta rules
+- **Implementation**: Meta actions validate system compliance during operation
+- **Example**: Meta action checks that new rule files follow naming convention
+- **Benefit**: System self-enforces architectural compliance
+
+### 22.4 Dual Purpose Meta Rules
+- **Target Behavior**: Meta rules serve both user rule governance and system governance
+- **Implementation**: Meta rules apply to both user-created rules and system components
+- **Example**: Same meta rule enforces logging format for user rules and system hooks
+- **Benefit**: Consistent governance across entire system
+
+**Success Criteria**:
+- Meta rules govern user rule creation
+- Meta rules govern system behavior
+- Meta actions enforce meta rules
+- Meta rules have dual purpose
+- System self-governs using meta rules
+
+---
+
+## Principle 23: Bypass Menu Interaction
+
+**Definition**: When Overseer blocks an action, it creates a bypass menu for the user. This provides flexibility while maintaining governance control.
+
+**Desired State**:
+
+### 23.1 Bypass Menu Creation
+- **Target Behavior**: Blocks create interactive bypass menus for users
+- **Implementation**: When a rule blocks an action, present user with override options
+- **Example**: Block displays "Allow this action", "Allow for this session", "Permanently allow"
+- **Benefit**: Users maintain control while governance provides safety
+
+### 23.2 User Override Options
+- **Target Behavior**: Users can override blocks with different scope
+- **Implementation**: Bypass menu offers temporary, session, or permanent override options
+- **Example**: User can choose to allow once, allow for session, or permanently allow
+- **Benefit**: Flexibility for edge cases and urgent situations
+
+### 23.3 Override Logging
+- **Target Behavior**: All bypass actions are logged with justification
+- **Implementation**: Bypass menu actions logged with user ID, reason, and scope
+- **Example**: Override logged as "User X overrode block Y with reason Z"
+- **Benefit**: Audit trail for override decisions
+
+### 23.4 Configurable Bypass Behavior
+- **Target Behavior**: Bypass menu behavior is configurable
+- **Implementation**: Configuration controls when bypass menu appears and what options are available
+- **Example**: Enterprise can disable bypass menu for critical environments
+- **Benefit**: Strictness levels configurable for different use cases
+
+**Success Criteria**:
+- Blocks create bypass menus for users
+- Multiple override scope options available
+- All bypass actions are logged
+- Bypass behavior is configurable
+- Override decisions are auditable
+
+---
+
+## Principle 24: Action Organization
+
+**Definition**: Python execution files are organized in Overseer/Actions directory, with meta actions for system governance and regular actions for user rules.
+
+**Desired State**:
+
+### 24.1 Actions Directory Structure
+- **Target Behavior**: Python execution files live in Overseer/Actions
+- **Implementation**: Both meta actions and regular actions stored in Overseer/Actions
+- **Example**: security_check.py and encoding_check.py in Overseer/Actions
+- **Benefit**: Clear separation of system logic and user rule logic
+
+### 24.2 Meta Actions Isolation
+- **Target Behavior**: Meta actions for system governance are clearly identified
+- **Implementation**: Meta actions prefixed or organized separately in Overseer/Actions
+- **Example**: meta_rule_validator.py clearly marked as meta action
+- **Benefit**: Clear distinction between system and user actions
+
+### 24.3 Action Naming Convention
+- **Target Behavior**: Actions follow naming convention matching their YAML files
+- **Implementation**: rule.yaml has rule.py in Overseer/Actions
+- **Example**: encoding_rules.yaml has encoding_rules.py
+- **Benefit**: Clear mapping between YAML rules and Python actions
+
+### 24.4 Action Registration
+- **Target Behavior**: Actions are registered with the system when files are added
+- **Implementation**: System discovers new actions in Overseer/Actions and registers them
+- **Example**: Adding new .py file to Overseer/Actions automatically registers it
+- **Benefit**: Easy to add new actions without configuration changes
+
+**Success Criteria**:
+- Actions stored in Overseer/Actions directory
+- Meta actions clearly identified
+- Actions follow naming convention with YAML files
+- New actions automatically registered
+- Clear separation of system and user actions
+
+---
+
+## Principle 25: Small Reusable Kernel
 
 **Definition**: Governance should be a small reusable kernel that work embeds, not a platform that work runs on. The kernel should be minimal, portable, and embeddable in any environment.
 
@@ -726,7 +986,7 @@
 
 ---
 
-## Principle 14: Hook Performance and Efficiency
+## Principle 26: Hook Performance and Efficiency
 
 **Definition**: Hook-based governance must add minimal performance overhead. Hooks are called synchronously during execution, so they must be extremely fast and efficient.
 
@@ -765,7 +1025,7 @@
 
 ---
 
-## Principle 15: Hook Reliability and Resilience
+## Principle 27: Hook Reliability and Resilience
 
 **Definition**: Hook-based governance must be extremely reliable. Hook failures should not break the system being governed.
 
@@ -804,7 +1064,7 @@
 
 ---
 
-## Principle 16: Light by Default, Advisory by Default
+## Principle 28: Light by Default, Advisory by Default
 
 **Definition**: Governance should be light and advisory by default, with the ability to be strict when needed. This balances usability for hobbyists with control for enterprises.
 
@@ -843,7 +1103,7 @@
 
 ---
 
-## Principle 17: Zero Dependency Portability
+## Principle 29: Zero Dependency Portability
 
 **Definition**: The governance system should have zero runtime dependencies when possible. This ensures maximum portability and reduces supply chain attack surface.
 
@@ -882,7 +1142,7 @@
 
 ---
 
-## Principle 18: Tamper-Evident Audit
+## Principle 30: Tamper-Evident Audit
 
 **Definition**: Governance decisions should be tamper-evident by default. Any modification to audit logs should be detectable, ensuring compliance and accountability.
 
@@ -921,7 +1181,7 @@
 
 ---
 
-## Principle 19: Digital Sovereignty
+## Principle 31: Digital Sovereignty
 
 **Definition**: The governance system should be sovereign by construction - portable across providers, inspectable in behavior, and free of hidden dependencies on any single vendor or platform.
 
@@ -960,7 +1220,7 @@
 
 ---
 
-## Principle 20: Hook Composability
+## Principle 32: Hook Composability
 
 **Definition**: Multiple hooks should be composable without conflicts. Users should be able to chain multiple governance hooks together.
 
