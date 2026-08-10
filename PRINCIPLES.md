@@ -63,7 +63,7 @@ Rules run synchronously when hooks trigger. Blocks create bypass menus, while ot
 **File System Structure**
 
 - `/rules` directory in `/Overseer` contains user rules (initially empty, populated by user)
-- Meta rules govern rule creation and system behavior
+- Adapters located in `Overseer/Adapters`, named as [ApplicationName]-Adapter.py (e.g., Devin-Adapter.py)
 - Python files accompanying rules are in `Overseer/Actions`
 - Meta actions in `Overseer/Actions` enforce meta rules for the system itself
 
@@ -79,7 +79,7 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ## Principle 1: True Agnosticism
 
-**Definition**: The core framework must make ZERO assumptions about adapters or environment. The framework should not know, care about, or depend on specific adapters, CLIs, or environments.
+**Definition**: The core framework must make ZERO functional assumptions about adapters or environment. The framework should not know, care about, or depend on specific adapter capabilities, CLI-specific behaviors, or tool implementations. However, framework conventions exist for organization and consistency.
 
 **Desired State**:
 
@@ -89,11 +89,11 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 - **Example**: If an adapter provides "CustomEventA" and another provides "CustomEventB", framework accepts both without modification
 - **Benefit**: Infinite extensibility without framework changes
 
-### 1.2 Zero Hardcoded Naming Conventions
-- **Target Behavior**: Framework does not enforce structural assumptions on adapters
-- **Implementation**: Adapter location, naming, and structure are configurable
-- **Example**: An adapter could be at any path, use any naming scheme, as long as it implements the contract
-- **Benefit**: Maximum flexibility for adapter developers
+### 1.2 Framework Conventions for Adapters
+- **Target Behavior**: Framework defines adapter location and naming conventions for consistency
+- **Implementation**: Adapters located in Overseer/Adapters, named as [ApplicationName]-Adapter.py
+- **Example**: Devin-Adapter.py, Cursor-Adapter.py, Claude-Adapter.py
+- **Benefit**: Consistent adapter organization while maintaining functional agnosticism
 
 ### 1.3 Zero CLI-Specific Assumptions
 - **Target Behavior**: Framework is completely CLI-agnostic in code and documentation
@@ -613,209 +613,31 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Implementation Roadmap
-
-### Phase 1: Plugin SDK Design
-- Design stable Plugin SDK interface
-- Define adapter contract
-- Create SDK versioning strategy
-- Develop SDK documentation
-- Ensure SDK can be used independently
-
-### Phase 2: Dynamic Event Registration
-- Implement event registration mechanism
-- Create schema registration system
-- Build event discovery system
-- Design metadata-driven processing
-- Support any schema format
-
-### Phase 3: Self-Contained Adapters
-- Refactor adapters to use SDK only
-- Implement dynamic schema definition
-- Create adapter capability declaration
-- Ensure adapter independence
-- Remove framework dependencies from adapters
-
-### Phase 4: Zero-Assumption Framework
-- Remove all hardcoded assumptions
-- Implement generic container pattern
-- Build configuration-driven behavior
-- Create metadata-driven processing
-- Enable infinite extensibility
-
-### Phase 5: Capability-Based System
-- Implement capability discovery
-- Build capability-based routing
-- Create open string identifier system
-- Design extensible capability set
-- Support dynamic capability registration
-
-### Phase 6: Layer Independence
-- Enforce unidirectional dependencies
-- Create stable interfaces
-- Implement layer replaceability
-- Build independent testing infrastructure
-- Ensure zero cross-layer imports
-
-### Phase 7: Extreme Modularization
-- Refactor files for maximum independence
-- Minimize import surfaces
-- Make each file self-contained
-- Remove implicit dependencies
-- Ensure explicit dependency declarations
-
-### Phase 8: Comprehensive Logging
-- Implement file-specific logging functions
-- Add extremely verbose logging to all operations
-- Standardize log format across all files
-- Implement silent failure pattern
-- Ensure complete execution traceability
-
-### Phase 9: Simplification
-- Simplify complex solutions
-- Break down large functions
-- Remove dead and unused code
-- Eliminate premature abstractions
-- Focus on actual requirements
-
-### Phase 10: SOLID Compliance
-- Ensure single responsibility for all classes
-- Implement open/closed principle
-- Validate Liskov substitution
-- Create focused interfaces
-- Implement dependency inversion
-
-### Phase 11: Component Modularity
-- Enforce loose coupling
-- Define clear contracts
-- Ensure single responsibility
-- Enable independent replaceability
-- Implement clear boundaries
-
-### Phase 12: Small Reusable Kernel
-- Minimize kernel code footprint
-- Implement embeddable architecture
-- Ensure domain neutrality
-- Create portable governance decisions
-- Design for universal embeddability
-
-### Phase 13: Hook Performance Optimization
-- Optimize hot paths for sub-millisecond execution
-- Implement efficient data structures
-- Minimize memory allocations
-- Add performance benchmarking
-- Ensure linear scaling under load
-
-### Phase 14: Hook Reliability Engineering
-- Implement graceful degradation patterns
-- Add hook isolation mechanisms
-- Ensure deterministic behavior
-- Implement circuit breaker pattern
-- Add comprehensive error handling
-
-### Phase 15: Advisory Governance Design
-- Implement advisory mode as default
-- Create configurable strictness levels
-- Design progressive enforcement path
-- Add local override capability
-- Ensure smooth transitions between modes
-
-### Phase 16: Zero Dependency Implementation
-- Eliminate third-party dependencies from core
-- Make all dependencies optional
-- Enable single-file deployment
-- Minimize supply chain attack surface
-- Ensure stdlib-only core functionality
-
-### Phase 17: Tamper-Evident Audit System
-- Implement hash chain verification
-- Add cryptographic signature support
-- Create append-only audit trail
-- Enable offline verification
-- Ensure tamper detection
-
-### Phase 18: Digital Sovereignty Implementation
-- Ensure provider portability
-- Make behavior fully inspectable
-- Eliminate hidden dependencies
-- Implement data sovereignty controls
-- Ensure no vendor lock-in
-
-### Phase 20: Hook Composability
-- Implement hook chaining mechanisms
-- Add hook isolation
-- Create configurable hook ordering
-- Design composable hook primitives
-- Enable complex governance pipelines
-
-### Phase 21: Rule System Implementation
-- Implement YAML rule parsing and validation
-- Create Python execution file system
-- Implement synchronous hook triggering
-- Set up /rules directory structure
-- Create rule-to-action mapping
-
-### Phase 22: Meta Rules and Actions
-- Design meta rule system for rule creation governance
-- Implement meta actions for system self-governance
-- Create dual-purpose meta rules
-- Set up meta action enforcement
-- Implement meta rule validation
-
-### Phase 23: Bypass Menu System
-- Implement bypass menu creation logic
-- Create override scope options (once, session, permanent)
-- Add override logging and audit trail
-- Implement configurable bypass behavior
-- Design bypass menu UI/CLI
-
-### Phase 24: Action Organization System
-- Set up Overseer/Actions directory structure
-- Implement meta action isolation
-- Create action naming convention enforcement
-- Implement automatic action registration
-- Design action discovery mechanism
-
-### Phase 25: Integration and Testing
-- Test all principles in integration
-- Validate agnosticism goals
-- Verify modularization targets
-- Test logging comprehensiveness
-- Validate simplicity and SOLID compliance
-- Benchmark hook performance
-- Test hook reliability under failure
-- Validate scalability from hobbyist to enterprise
-- Test rule system and meta rules
-- Validate bypass menu functionality
-- Test action organization and registration
-
----
-
-## Principle 21: Rule-Based Governance System
+## Principle 13: Rule-Based Governance System
 
 **Definition**: Governance is implemented through YAML rule files with accompanying Python execution files. Users define policies as YAML files, and Python files execute the logic when hooks are triggered.
 
 **Desired State**:
 
-### 21.1 YAML Rule Definition
+### 13.1 YAML Rule Definition
 - **Target Behavior**: Users define governance rules in YAML files
 - **Implementation**: YAML files specify rule conditions, actions, and metadata
 - **Example**: rule.yaml defines "prevent deleting important files" with Python execution logic
 - **Benefit**: Human-readable policy definition, easy to version control
 
-### 21.2 Python Execution Files
+### 13.2 Python Execution Files
 - **Target Behavior**: Each YAML rule has a corresponding Python file with execution logic
 - **Implementation**: Python files execute when hooks trigger, implementing rule logic
 - **Example**: rule.yaml has rule.py that checks file importance and blocks deletion
 - **Benefit**: Complex logic in Python, simple configuration in YAML
 
-### 21.3 Synchronous Hook Triggering
+### 13.3 Synchronous Hook Triggering
 - **Target Behavior**: Rules run synchronously when hooks trigger
 - **Implementation**: Hook calls rule execution immediately, blocking tool execution until complete
 - **Example**: PreToolUse hook triggers rule.py synchronously before tool executes
 - **Benefit**: Governance decisions happen before tool execution
 
-### 21.4 Rule File Location
+### 13.4 Rule File Location
 - **Target Behavior**: User rules live in /rules directory in /Overseer
 - **Implementation**: /rules directory initially empty, populated by user with their rules
 - **Example**: User adds security_rules.yaml and security_rules.py to /rules/
@@ -830,31 +652,31 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 22: Meta Rules and Actions
+## Principle 14: Meta Rules and Actions
 
 **Definition**: The system includes meta rules that govern both user rule creation and system behavior. Meta actions enforce meta rules for system compliance and self-governance.
 
 **Desired State**:
 
-### 22.1 Meta Rule Governance
+### 14.1 Meta Rule Governance
 - **Target Behavior**: Meta rules govern how users create their own rules
 - **Implementation**: Meta rules define rule format, structure, naming conventions
 - **Example**: Meta rules require rule.yaml to have specific required fields
 - **Benefit**: Consistent rule structure across user rules
 
-### 22.2 System Self-Governance
+### 14.2 System Self-Governance
 - **Target Behavior**: Meta rules govern the Overseer system itself
 - **Implementation**: Meta rules define system behavior for hooks, logging, configuration
 - **Example**: Meta rules ensure all system hooks follow logging principles
 - **Benefit**: System follows its own architectural principles
 
-### 22.3 Meta Actions Execution
+### 14.3 Meta Actions Execution
 - **Target Behavior**: Meta actions in Overseer/Actions enforce meta rules
 - **Implementation**: Meta actions validate system compliance during operation
 - **Example**: Meta action checks that new rule files follow naming convention
 - **Benefit**: System self-enforces architectural compliance
 
-### 22.4 Dual Purpose Meta Rules
+### 14.4 Dual Purpose Meta Rules
 - **Target Behavior**: Meta rules serve both user rule governance and system governance
 - **Implementation**: Meta rules apply to both user-created rules and system components
 - **Example**: Same meta rule enforces logging format for user rules and system hooks
@@ -869,31 +691,31 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 23: Bypass Menu Interaction
+## Principle 15: Bypass Menu Interaction
 
 **Definition**: When Overseer blocks an action, it creates a bypass menu for the user. This provides flexibility while maintaining governance control.
 
 **Desired State**:
 
-### 23.1 Bypass Menu Creation
+### 15.1 Bypass Menu Creation
 - **Target Behavior**: Blocks create interactive bypass menus for users
 - **Implementation**: When a rule blocks an action, present user with override options
 - **Example**: Block displays "Allow this action", "Allow for this session", "Permanently allow"
 - **Benefit**: Users maintain control while governance provides safety
 
-### 23.2 User Override Options
+### 15.2 User Override Options
 - **Target Behavior**: Users can override blocks with different scope
 - **Implementation**: Bypass menu offers temporary, session, or permanent override options
 - **Example**: User can choose to allow once, allow for session, or permanently allow
 - **Benefit**: Flexibility for edge cases and urgent situations
 
-### 23.3 Override Logging
+### 15.3 Override Logging
 - **Target Behavior**: All bypass actions are logged with justification
 - **Implementation**: Bypass menu actions logged with user ID, reason, and scope
 - **Example**: Override logged as "User X overrode block Y with reason Z"
 - **Benefit**: Audit trail for override decisions
 
-### 23.4 Configurable Bypass Behavior
+### 15.4 Configurable Bypass Behavior
 - **Target Behavior**: Bypass menu behavior is configurable
 - **Implementation**: Configuration controls when bypass menu appears and what options are available
 - **Example**: Enterprise can disable bypass menu for critical environments
@@ -908,31 +730,31 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 24: Action Organization
+## Principle 16: Action Organization
 
 **Definition**: Python execution files are organized in Overseer/Actions directory, with meta actions for system governance and regular actions for user rules.
 
 **Desired State**:
 
-### 24.1 Actions Directory Structure
+### 16.1 Actions Directory Structure
 - **Target Behavior**: Python execution files live in Overseer/Actions
 - **Implementation**: Both meta actions and regular actions stored in Overseer/Actions
 - **Example**: security_check.py and encoding_check.py in Overseer/Actions
 - **Benefit**: Clear separation of system logic and user rule logic
 
-### 24.2 Meta Actions Isolation
+### 16.2 Meta Actions Isolation
 - **Target Behavior**: Meta actions for system governance are clearly identified
 - **Implementation**: Meta actions prefixed or organized separately in Overseer/Actions
 - **Example**: meta_rule_validator.py clearly marked as meta action
 - **Benefit**: Clear distinction between system and user actions
 
-### 24.3 Action Naming Convention
+### 16.3 Action Naming Convention
 - **Target Behavior**: Actions follow naming convention matching their YAML files
 - **Implementation**: rule.yaml has rule.py in Overseer/Actions
 - **Example**: encoding_rules.yaml has encoding_rules.py
 - **Benefit**: Clear mapping between YAML rules and Python actions
 
-### 24.4 Action Registration
+### 16.4 Action Registration
 - **Target Behavior**: Actions are registered with the system when files are added
 - **Implementation**: System discovers new actions in Overseer/Actions and registers them
 - **Example**: Adding new .py file to Overseer/Actions automatically registers it
@@ -947,7 +769,7 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 25: Small Reusable Kernel
+## Principle 17: Small Reusable Kernel
 
 **Definition**: Governance should be a small reusable kernel that work embeds, not a platform that work runs on. The kernel should be minimal, portable, and embeddable in any environment.
 
@@ -986,7 +808,7 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 26: Hook Performance and Efficiency
+## Principle 18: Hook Performance and Efficiency
 
 **Definition**: Hook-based governance must add minimal performance overhead. Hooks are called synchronously during execution, so they must be extremely fast and efficient.
 
@@ -1025,7 +847,7 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 27: Hook Reliability and Resilience
+## Principle 19: Hook Reliability and Resilience
 
 **Definition**: Hook-based governance must be extremely reliable. Hook failures should not break the system being governed.
 
@@ -1064,7 +886,7 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 28: Light by Default, Advisory by Default
+## Principle 20: Light by Default, Advisory by Default
 
 **Definition**: Governance should be light and advisory by default, with the ability to be strict when needed. This balances usability for hobbyists with control for enterprises.
 
@@ -1103,7 +925,7 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 29: Zero Dependency Portability
+## Principle 21: Zero Dependency Portability
 
 **Definition**: The governance system should have zero runtime dependencies when possible. This ensures maximum portability and reduces supply chain attack surface.
 
@@ -1142,7 +964,7 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 30: Tamper-Evident Audit
+## Principle 22: Tamper-Evident Audit
 
 **Definition**: Governance decisions should be tamper-evident by default. Any modification to audit logs should be detectable, ensuring compliance and accountability.
 
@@ -1181,7 +1003,7 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 31: Digital Sovereignty
+## Principle 23: Digital Sovereignty
 
 **Definition**: The governance system should be sovereign by construction - portable across providers, inspectable in behavior, and free of hidden dependencies on any single vendor or platform.
 
@@ -1220,31 +1042,31 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 32: Hook Composability
+## Principle 24: Hook Composability
 
 **Definition**: Multiple hooks should be composable without conflicts. Users should be able to chain multiple governance hooks together.
 
 **Desired State**:
 
-### 20.1 Hook Chaining
+### 24.1 Hook Chaining
 - **Target Behavior**: Multiple hooks can be chained together
 - **Implementation**: Hooks are called in configurable order, pass-through pattern
 - **Example**: Validation hook → Logging hook → Audit hook
 - **Benefit**: Users can combine multiple governance concerns
 
-### 20.2 Hook Isolation
+### 24.2 Hook Isolation
 - **Target Behavior**: Hooks don't interfere with each other
 - **Implementation**: Each hook operates on independent data or copy of data
 - **Example**: One hook can't modify data that affects another hook
 - **Benefit**: Predictable behavior, easier debugging
 
-### 20.3 Configurable Hook Order
+### 24.3 Configurable Hook Order
 - **Target Behavior**: Hook execution order is configurable
 - **Implementation**: Configuration defines hook priority and ordering
 - **Example**: User can specify which hooks run first
 - **Benefit**: Flexibility in governance pipeline construction
 
-### 20.4 Hook Composition APIs
+### 24.4 Hook Composition APIs
 - **Target Behavior**: Easy to compose hooks from smaller pieces
 - **Implementation**: Provide composable hook primitives
 - **Example**: Combine validation, logging, and audit into single composite hook
