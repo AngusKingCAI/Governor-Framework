@@ -11,16 +11,29 @@ Design Principles:
 - Zero runtime overhead
 - YAGNI compliance (events only, no response formats initially)
 - Layer independence (no imports from other Overseer files)
+- CLI-agnostic: Core universal events + extensible for CLI-specific events
+- Agent-agnostic: Generic schemas applicable to any agent type
 
-Event Types:
-- session_start: Session initialization
-- user_prompt_submit: User prompt submission
-- pre_tool_use: Pre-tool use validation
-- post_tool_use: Post-tool use logging
-- permission_request: Permission request handling
-- stop: Session stop event
-- session_end: Session termination
-- post_compaction: Post-compaction event
+Architecture:
+- Core Universal Events: Governance-critical events common across all CLIs
+- Extensible Events: CLI-specific events handled via adapter translation
+- Adapter Pattern: CLI adapters translate native events to universal format
+
+Core Universal Events (governance-critical, common across CLIs):
+- session_start: Session initialization (all CLIs)
+- user_prompt_submit: User prompt submission (Devin, Claude, VS Code)
+- pre_tool_use: Pre-tool use validation (all CLIs)
+- post_tool_use: Post-tool use logging (all CLIs)
+- permission_request: Permission request handling (Devin, Claude)
+- stop: Session stop event (all CLIs)
+- session_end: Session termination (Devin, Claude, Cursor)
+- subagent_start: Subagent initialization (Claude, Cursor, VS Code)
+- subagent_stop: Subagent termination (Claude, Cursor, VS Code)
+
+Extensible Events (CLI-specific, handled via adapters):
+- CLI-specific events like UserPromptExpansion, PostToolUseFailure, etc.
+- These are handled by adapters and mapped to universal events where possible
+- CLI-specific data preserved in metadata field
 
 Usage:
     from Overseer.Core.protocol import StandardEvent, SessionStartEvent
@@ -413,11 +426,141 @@ class PostCompactionEvent(TypedDict):
     metadata: NotRequired[Dict[str, Any]]
 
 
+class SubagentStartEvent(TypedDict):
+    """
+    Schema for subagent_start event type.
+    
+    This event represents the initialization of a subagent (background agent).
+    Common across Claude, Cursor, and VS Code.
+    
+    Required Fields:
+        session_id: Session identifier
+        subagent_id: Unique identifier for the subagent
+        timestamp: ISO 8601 timestamp when subagent started
+        subagent_type: Type of subagent (e.g., "explore", "general")
+    
+    Optional Fields:
+        task: Task description for the subagent
+        parent_agent_id: Parent agent identifier
+        metadata: Additional metadata about the subagent
+    
+    Example:
+        {
+            "session_id": "550e8400-e29b-41d4-a716-446655440000",
+            "subagent_id": "subagent_123",
+            "timestamp": "2024-01-15T10:38:00.000Z",
+            "subagent_type": "explore",
+            "task": "Research best practices"
+        }
+    
+    Notes:
+        - This is a non-blocking event (subagent already started)
+        - Used for tracking parallel execution
+        - Governance may track subagent resource usage
+    """
+    session_id: str
+    subagent_id: str
+    timestamp: str
+    subagent_type: str
+    task: NotRequired[str]
+    parent_agent_id: NotRequired[str]
+    metadata: NotRequired[Dict[str, Any]]
+
+
+class SubagentStopEvent(TypedDict):
+    """
+    Schema for subagent_stop event type.
+    
+    This event represents the termination of a subagent.
+    Common across Claude, Cursor, and VS Code.
+    
+    Required Fields:
+        session_id: Session identifier
+        subagent_id: Unique identifier for the subagent
+        timestamp: ISO 8601 timestamp when subagent stopped
+        status: Final status (e.g., "completed", "failed", "cancelled")
+    
+    Optional Fields:
+        result: Result data if subagent completed successfully
+        error: Error message if subagent failed
+        duration: Duration of subagent execution in seconds
+        metadata: Additional metadata about the subagent
+    
+    Example:
+        {
+            "session_id": "550e8400-e29b-41d4-a716-446655440000",
+            "subagent_id": "subagent_123",
+            "timestamp": "2024-01-15T10:39:00.000Z",
+            "status": "completed",
+            "duration": 120
+        }
+    
+    Notes:
+        - This is a non-blocking event (subagent already stopped)
+        - Used for tracking parallel execution completion
+        - May trigger cleanup or result processing
+    """
+    session_id: str
+    subagent_id: str
+    timestamp: str
+    status: str
+    result: NotRequired[Dict[str, Any]]
+    error: NotRequired[str]
+    duration: NotRequired[int]
+    metadata: NotRequired[Dict[str, Any]]
+
+
+class ExtensibleEvent(TypedDict):
+    """
+    Generic schema for CLI-specific events that don't map to universal events.
+    
+    This schema provides flexibility for CLI-specific events while maintaining
+    the ability to govern them through the Overseer Framework.
+    
+    Required Fields:
+        event_type: Original CLI-specific event type name
+        source: CLI source (e.g., "claude", "cursor", "vscode")
+        timestamp: ISO 8601 timestamp when event occurred
+        session_id: Session identifier
+    
+    Optional Fields:
+        original_event_name: Original CLI event name before translation
+        cli_specific_data: CLI-specific data that doesn't map to universal schema
+        mapped_universal_event: Universal event type if mapping exists
+        metadata: Additional metadata about the event
+    
+    Example:
+        {
+            "event_type": "UserPromptExpansion",
+            "source": "claude",
+            "timestamp": "2024-01-15T10:40:00.000Z",
+            "session_id": "550e8400-e29b-41d4-a716-446655440000",
+            "original_event_name": "UserPromptExpansion",
+            "cli_specific_data": {"expanded_prompt": "..."}
+        }
+    
+    Notes:
+        - Provides extensibility for CLI-specific events
+        - Adapters can preserve CLI-specific data in cli_specific_data
+        - Governance can still apply basic rules to extensible events
+        - Future: May evolve into specific universal events as patterns emerge
+    """
+    event_type: str
+    source: str
+    timestamp: str
+    session_id: str
+    original_event_name: NotRequired[str]
+    cli_specific_data: NotRequired[Dict[str, Any]]
+    mapped_universal_event: NotRequired[str]
+    metadata: NotRequired[Dict[str, Any]]
+
+
 # =============================================================================
 # SECTION 3: Event Type Registry
 # =============================================================================
 
 EVENT_TYPES = {
+    # Core Universal Events (governance-critical, common across CLIs)
     "session_start": SessionStartEvent,
     "user_prompt_submit": UserPromptSubmitEvent,
     "pre_tool_use": PreToolUseEvent,
@@ -426,6 +569,11 @@ EVENT_TYPES = {
     "stop": StopEvent,
     "session_end": SessionEndEvent,
     "post_compaction": PostCompactionEvent,
+    "subagent_start": SubagentStartEvent,
+    "subagent_stop": SubagentStopEvent,
+    
+    # Extensible Event (for CLI-specific events)
+    "extensible": ExtensibleEvent,
 }
 
 
@@ -435,6 +583,7 @@ EVENT_TYPES = {
 
 __all__ = [
     "StandardEvent",
+    # Core Universal Events
     "SessionStartEvent",
     "UserPromptSubmitEvent",
     "PreToolUseEvent",
@@ -443,5 +592,10 @@ __all__ = [
     "StopEvent",
     "SessionEndEvent",
     "PostCompactionEvent",
+    "SubagentStartEvent",
+    "SubagentStopEvent",
+    # Extensible Event
+    "ExtensibleEvent",
+    # Registry
     "EVENT_TYPES",
 ]
