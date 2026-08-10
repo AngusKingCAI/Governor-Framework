@@ -517,6 +517,27 @@
 4. No premature abstractions
 5. Features are implemented based on actual needs
 
+**Framework achieves hook performance when**:
+1. Hook execution <0.1ms p50 for allow path
+2. Hook execution <0.5ms p99 for deny path
+3. Linear scaling with concurrent load
+4. Minimal memory footprint
+5. <1% CPU overhead for typical workloads
+
+**Framework achieves hook reliability when**:
+1. Hook failures never crash the governed system
+2. Hook failures are isolated to specific components
+3. Hook behavior is deterministic and reproducible
+4. Circuit breaker prevents cascading failures
+5. System degrades gracefully under failure
+
+**Framework achieves scalability when**:
+1. Works for hobbyists with minimal setup
+2. Scales to enterprise workloads
+3. Provides configurable strictness levels
+4. Works in resource-constrained environments
+5. Supports multiple deployment scenarios
+
 ---
 
 ## Implementation Roadmap
@@ -598,9 +619,380 @@
 - Enable independent replaceability
 - Implement clear boundaries
 
-### Phase 12: Integration and Testing
+### Phase 12: Small Reusable Kernel
+- Minimize kernel code footprint
+- Implement embeddable architecture
+- Ensure domain neutrality
+- Create portable governance decisions
+- Design for universal embeddability
+
+### Phase 13: Hook Performance Optimization
+- Optimize hot paths for sub-millisecond execution
+- Implement efficient data structures
+- Minimize memory allocations
+- Add performance benchmarking
+- Ensure linear scaling under load
+
+### Phase 14: Hook Reliability Engineering
+- Implement graceful degradation patterns
+- Add hook isolation mechanisms
+- Ensure deterministic behavior
+- Implement circuit breaker pattern
+- Add comprehensive error handling
+
+### Phase 15: Advisory Governance Design
+- Implement advisory mode as default
+- Create configurable strictness levels
+- Design progressive enforcement path
+- Add local override capability
+- Ensure smooth transitions between modes
+
+### Phase 16: Zero Dependency Implementation
+- Eliminate third-party dependencies from core
+- Make all dependencies optional
+- Enable single-file deployment
+- Minimize supply chain attack surface
+- Ensure stdlib-only core functionality
+
+### Phase 17: Tamper-Evident Audit System
+- Implement hash chain verification
+- Add cryptographic signature support
+- Create append-only audit trail
+- Enable offline verification
+- Ensure tamper detection
+
+### Phase 18: Digital Sovereignty Implementation
+- Ensure provider portability
+- Make behavior fully inspectable
+- Eliminate hidden dependencies
+- Implement data sovereignty controls
+- Ensure no vendor lock-in
+
+### Phase 19: Hook Composability
+- Implement hook chaining mechanisms
+- Add hook isolation
+- Create configurable hook ordering
+- Design composable hook primitives
+- Enable complex governance pipelines
+
+### Phase 20: Integration and Testing
 - Test all principles in integration
 - Validate agnosticism goals
 - Verify modularization targets
 - Test logging comprehensiveness
 - Validate simplicity and SOLID compliance
+- Benchmark hook performance
+- Test hook reliability under failure
+- Validate scalability from hobbyist to enterprise
+
+---
+
+## Principle 13: Small Reusable Kernel
+
+**Definition**: Governance should be a small reusable kernel that work embeds, not a platform that work runs on. The kernel should be minimal, portable, and embeddable in any environment.
+
+**Desired State**:
+
+### 13.1 Kernel Minimality
+- **Target Behavior**: Core governance kernel is as small as possible
+- **Implementation**: Only essential governance logic in kernel, everything else in adapters
+- **Example**: Kernel only contains event routing and policy enforcement, not domain-specific logic
+- **Benefit**: Easy to embed, understand, and maintain
+
+### 13.2 Embeddability
+- **Target Behavior**: Kernel can be embedded in any environment
+- **Implementation**: Zero runtime dependencies, stdlib-only when possible
+- **Example**: Kernel can be embedded in CLI, web service, or any application
+- **Benefit**: Universal applicability across deployment scenarios
+
+### 13.3 Domain Neutrality
+- **Target Behavior**: Kernel contains no domain-specific logic
+- **Implementation**: All domain-specific logic lives in adapters
+- **Example**: Kernel doesn't know about "Devin" or "Claude", only about "events" and "policies"
+- **Benefit**: Same kernel can govern different domains
+
+### 13.4 Portable Governance
+- **Target Behavior**: Governance decisions are portable and verifiable
+- **Implementation**: Decisions are self-contained and can be verified independently
+- **Example**: Governance decisions can be audited without access to the original system
+- **Benefit**: Compliance verification and auditability
+
+**Success Criteria**:
+- Kernel has minimal code footprint
+- Kernel can be embedded without dependencies
+- Kernel contains zero domain-specific logic
+- Governance decisions are portable and verifiable
+- Kernel works in any environment
+
+---
+
+## Principle 14: Hook Performance and Efficiency
+
+**Definition**: Hook-based governance must add minimal performance overhead. Hooks are called synchronously during execution, so they must be extremely fast and efficient.
+
+**Desired State**:
+
+### 14.1 Sub-Millisecond Hook Execution
+- **Target Behavior**: Hook execution completes in sub-millisecond time
+- **Implementation**: Optimize hot paths, minimize allocations, use efficient data structures
+- **Example**: Hook completes in <0.1ms for allow path, <0.5ms for deny path
+- **Benefit**: Governance overhead is negligible compared to tool execution time
+
+### 14.2 Linear Scaling
+- **Target Behavior**: Performance scales linearly with load
+- **Implementation**: No O(n²) or worse algorithms in hot paths
+- **Example**: 1000 concurrent agents maintain consistent per-hook latency
+- **Benefit**: Predictable performance under load
+
+### 14.3 Zero Allocations in Hot Paths
+- **Target Behavior**: Hot paths avoid memory allocations
+- **Implementation**: Reuse objects, use efficient data structures, avoid boxing
+- **Example**: Pre-allocate log buffers, reuse event objects
+- **Benefit**: Reduced GC pressure, consistent latency
+
+### 14.4 Efficient Resource Usage
+- **Target Behavior**: Minimal CPU and memory footprint
+- **Implementation**: Lazy loading, efficient algorithms, resource pooling
+- **Example**: Governance adds <1% CPU overhead for typical workloads
+- **Benefit**: Suitable for resource-constrained environments
+
+**Success Criteria**:
+- Hook execution <0.1ms p50 for allow path
+- Hook execution <0.5ms p99 for deny path
+- Linear scaling with concurrent load
+- Minimal memory footprint
+- <1% CPU overhead for typical workloads
+
+---
+
+## Principle 15: Hook Reliability and Resilience
+
+**Definition**: Hook-based governance must be extremely reliable. Hook failures should not break the system being governed.
+
+**Desired State**:
+
+### 15.1 Graceful Degradation
+- **Target Behavior**: Hook failures don't crash the governed system
+- **Implementation**: Hooks use silent failure pattern, fallback to safe defaults
+- **Example**: If hook fails, default to "allow" or configured safe behavior
+- **Benefit**: System continues working even if governance fails
+
+### 15.2 Hook Isolation
+- **Target Behavior**: Hook failures don't affect other hooks
+- **Implementation**: Each hook is isolated with its own error handling
+- **Example**: One adapter's hook failure doesn't prevent other adapters from working
+- **Benefit**: Partial failure doesn't cause system-wide failure
+
+### 15.3 Deterministic Hook Behavior
+- **Target Behavior**: Same inputs always produce same outputs
+- **Implementation**: No randomness, no state-dependent behavior in hot paths
+- **Example**: Same event always produces same governance decision
+- **Benefit**: Reproducible behavior, easier debugging and testing
+
+### 15.4 Circuit Breaker Pattern
+- **Target Behavior**: Failing hooks are temporarily disabled
+- **Implementation**: Circuit breaker disables hooks after repeated failures
+- **Example**: If a hook fails 3 times in a row, disable it for 1 minute
+- **Benefit**: System recovers from transient failures automatically
+
+**Success Criteria**:
+- Hook failures never crash the governed system
+- Hook failures are isolated to specific components
+- Hook behavior is deterministic and reproducible
+- Circuit breaker prevents cascading failures
+- System degrades gracefully under failure
+
+---
+
+## Principle 16: Light by Default, Advisory by Default
+
+**Definition**: Governance should be light and advisory by default, with the ability to be strict when needed. This balances usability for hobbyists with control for enterprises.
+
+**Desired State**:
+
+### 16.1 Advisory Mode Default
+- **Target Behavior**: Default governance mode is advisory (log only, don't block)
+- **Implementation**: Hooks log decisions but don't block by default
+- **Example**: New installations start in "log-only" mode
+- **Benefit**: Low barrier to entry for hobbyists
+
+### 16.2 Configurable Strictness
+- **Target Behavior**: Strictness levels are configurable
+- **Implementation**: Support log-only, advisory, blocking modes
+- **Example**: Hobbyists use log-only, enterprises use blocking mode
+- **Benefit**: Scales from casual to critical use cases
+
+### 16.3 Progressive Enforcement
+- **Target Behavior**: Users can progressively increase strictness
+- **Implementation**: Start permissive, allow gradual tightening of policies
+- **Example**: Start with logging, move to warnings, then to blocking
+- **Benefit**: Users can adapt governance to their needs gradually
+
+### 16.4 Local Override Capability
+- **Target Behavior**: Users can override governance locally when needed
+- **Implementation**: Provide local escape hatch for emergencies
+- **Example**: Local file can temporarily disable specific rules
+- **Benefit**: Flexibility for urgent situations without breaking governance
+
+**Success Criteria**:
+- Default mode is advisory (log-only)
+- Multiple strictness levels supported
+- Progressive enforcement path available
+- Local override capability exists
+- No breaking changes when moving between modes
+
+---
+
+## Principle 17: Zero Dependency Portability
+
+**Definition**: The governance system should have zero runtime dependencies when possible. This ensures maximum portability and reduces supply chain attack surface.
+
+**Desired State**:
+
+### 17.1 Standard Library Only
+- **Target Behavior**: Core system uses only Python standard library
+- **Implementation**: No third-party dependencies in kernel
+- **Example**: Governance kernel works with pure Python stdlib
+- **Benefit**: Maximum portability, reduced attack surface
+
+### 17.2 Optional Dependencies
+- **Target Behavior**: Third-party dependencies are optional
+- **Implementation**: Core functionality works without extras, extras provide enhanced features
+- **Example**: Core works without external libs, optional libs add features like web dashboard
+- **Benefit**: Works in constrained environments, enhanced features available when needed
+
+### 17.3 Self-Contained Deployment
+- **Target Behavior**: System can be deployed without external dependencies
+- **Implementation**: Single-file deployment or minimal dependency set
+- **Example**: Governance can be deployed as a single Python file
+- **Benefit**: Easy deployment in restricted environments
+
+### 17.4 Supply Chain Security
+- **Target Behavior**: Minimal dependency attack surface
+- **Implementation**: Zero or minimal third-party dependencies
+- **Example**: No package manager attacks possible on core governance
+- **Benefit**: Enhanced security for security-sensitive governance
+
+**Success Criteria**:
+- Core governance uses only standard library
+- Third-party dependencies are optional
+- System can be deployed as single file
+- Minimal supply chain attack surface
+- Works in dependency-constrained environments
+
+---
+
+## Principle 18: Tamper-Evident Audit
+
+**Definition**: Governance decisions should be tamper-evident by default. Any modification to audit logs should be detectable, ensuring compliance and accountability.
+
+**Desired State**:
+
+### 18.1 Hash Chain Verification
+- **Target Behavior**: Audit logs use hash chain for tamper detection
+- **Implementation**: Each log entry includes hash of previous entry
+- **Example**: Merkle tree or hash chain for log integrity
+- **Benefit**: Any modification to logs is detectable
+
+### 18.2 Cryptographic Signatures
+- **Target Behavior**: Critical decisions are cryptographically signed
+- **Implementation**: Governance decisions include cryptographic signatures
+- **Example**: Denial decisions signed with private key, verifiable with public key
+- **Benefit**: Decision authenticity and non-repudiation
+
+### 18.3 Immutable Audit Trail
+- **Target Behavior**: Audit trail is append-only
+- **Implementation**: Once written, audit entries cannot be modified
+- **Example**: Log files are append-only, deletion prohibited
+- **Benefit**: Immutable evidence for compliance
+
+### 18.4 Offline Verification
+- **Target Behavior**: Audit can be verified without system access
+- **Implementation**: Audit verification works with only log files and public keys
+- **Example**: External auditor can verify logs without accessing running system
+- **Benefit**: Independent compliance verification
+
+**Success Criteria**:
+- Audit logs use hash chain for integrity
+- Critical decisions are cryptographically signed
+- Audit trail is append-only
+- Verification works offline
+- Any modification is detectable
+
+---
+
+## Principle 19: Digital Sovereignty
+
+**Definition**: The governance system should be sovereign by construction - portable across providers, inspectable in behavior, and free of hidden dependencies on any single vendor or platform.
+
+**Desired State**:
+
+### 19.1 Provider Portability
+- **Target Behavior**: System works across different providers/platforms
+- **Implementation**: No provider-specific dependencies or lock-in
+- **Example**: Works on AWS, Azure, GCP, or on-premise equally
+- **Benefit**: No vendor lock-in, deployment flexibility
+
+### 19.2 Behavioral Inspectability
+- **Target Behavior**: System behavior is fully inspectable
+- **Implementation**: Open source, clear code, comprehensive logging
+- **Example**: All decisions can be audited and explained
+- **Benefit**: Trust through transparency
+
+### 19.3 No Hidden Dependencies
+- **Target Behavior**: No hidden dependencies on single vendor/platform
+- **Implementation**: All dependencies are explicit and documented
+- **Example**: No proprietary services or cloud-specific features
+- **Benefit**: Full control over deployment and operation
+
+### 19.4 Data Sovereignty
+- **Target Behavior**: User controls where data is stored and processed
+- **Implementation**: All data processing happens in user-controlled environment
+- **Example**: Logs, policies, and audit data stay in user's infrastructure
+- **Benefit**: Compliance with data residency requirements
+
+**Success Criteria**:
+- Works across multiple providers/platforms
+- System behavior is fully inspectable
+- No hidden vendor dependencies
+- User controls data location
+- No vendor lock-in
+
+---
+
+## Principle 20: Hook Composability
+
+**Definition**: Multiple hooks should be composable without conflicts. Users should be able to chain multiple governance hooks together.
+
+**Desired State**:
+
+### 20.1 Hook Chaining
+- **Target Behavior**: Multiple hooks can be chained together
+- **Implementation**: Hooks are called in configurable order, pass-through pattern
+- **Example**: Validation hook → Logging hook → Audit hook
+- **Benefit**: Users can combine multiple governance concerns
+
+### 20.2 Hook Isolation
+- **Target Behavior**: Hooks don't interfere with each other
+- **Implementation**: Each hook operates on independent data or copy of data
+- **Example**: One hook can't modify data that affects another hook
+- **Benefit**: Predictable behavior, easier debugging
+
+### 20.3 Configurable Hook Order
+- **Target Behavior**: Hook execution order is configurable
+- **Implementation**: Configuration defines hook priority and ordering
+- **Example**: User can specify which hooks run first
+- **Benefit**: Flexibility in governance pipeline construction
+
+### 20.4 Hook Composition APIs
+- **Target Behavior**: Easy to compose hooks from smaller pieces
+- **Implementation**: Provide composable hook primitives
+- **Example**: Combine validation, logging, and audit into single composite hook
+- **Benefit**: Reusable hook components
+
+**Success Criteria**:
+- Multiple hooks can be chained
+- Hooks don't interfere with each other
+- Hook order is configurable
+- Easy to compose hooks from primitives
+- Complex governance pipelines can be built
