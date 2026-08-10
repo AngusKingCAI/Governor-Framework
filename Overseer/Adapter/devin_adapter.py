@@ -9,7 +9,7 @@ import json
 import os
 from datetime import datetime
 from typing import Dict, Any
-from ..Core.protocol import StandardEvent
+from ..Core.protocol import StandardEvent, BaseAdapter
 
 
 def log_adapter_event(component: str, data: Dict[str, Any]):
@@ -45,7 +45,7 @@ def log_adapter_event(component: str, data: Dict[str, Any]):
         pass
 
 
-class DevinAdapter:
+class DevinAdapter(BaseAdapter):
     """
     Adapter for Devin CLI hook system.
     

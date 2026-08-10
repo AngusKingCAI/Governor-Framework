@@ -16,18 +16,18 @@ import sys
 import uuid
 import importlib
 from datetime import datetime
-from typing import Dict, Any, Optional, Callable
+from typing import TypedDict, NotRequired, Dict, Any, Optional, Callable
 
 # Handle both module import and direct script execution
 try:
-    from .protocol import StandardEvent
+    from .protocol import StandardEvent, HandlerResponse
 except ImportError:
     # When run as script, add the Governor Framework root to path
     # This allows importing Overseer as a package when run as: python Overseer/Core/overseer.py
     framework_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     if framework_root not in sys.path:
         sys.path.insert(0, framework_root)
-    from Overseer.Core.protocol import StandardEvent
+    from Overseer.Core.protocol import StandardEvent, HandlerResponse
 
 # Get Overseer package root
 OVERSEER_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -65,13 +65,6 @@ def get_adapter(adapter_name: str):
         Adapter instance
     """
     try:
-        # Add both current directory and Overseer directory to path for imports
-        current_dir = os.path.dirname(OVERSEER_ROOT)
-        if current_dir not in sys.path:
-            sys.path.insert(0, current_dir)
-        if OVERSEER_ROOT not in sys.path:
-            sys.path.insert(0, OVERSEER_ROOT)
-        
         # Define allowlist of allowed adapters from config
         ALLOWED_ADAPTERS = {"devin", "claude", "cursor", "vscode"}
         
@@ -80,19 +73,14 @@ def get_adapter(adapter_name: str):
             log_execution("adapter", {"event": "adapter_not_allowed", "adapter": adapter_name})
             raise ValueError(f"Adapter '{adapter_name}' is not in the allowlist")
         
-        # Import adapter from Adapter directory
-        if adapter_name == "devin":
-            from Overseer.Adapter.devin_adapter import DevinAdapter
-            return DevinAdapter()
-        else:
-            # Try to dynamically load adapter with allowlist validation
-            module_name = f"Overseer.Adapter.{adapter_name}_adapter"
-            adapter_class_name = f"{adapter_name.capitalize()}Adapter"
-            
-            # Use importlib instead of __import__ for security
-            module = importlib.import_module(module_name)
-            adapter_class = getattr(module, adapter_class_name)
-            return adapter_class()
+        # Import adapter from Adapter directory using consistent dynamic loading
+        module_name = f"Overseer.Adapter.{adapter_name}_adapter"
+        adapter_class_name = f"{adapter_name.capitalize()}Adapter"
+        
+        # Use importlib instead of __import__ for security
+        module = importlib.import_module(module_name)
+        adapter_class = getattr(module, adapter_class_name)
+        return adapter_class()
     except ImportError as e:
         log_execution("adapter", {"event": "adapter_load_failed", "adapter": adapter_name, "error": str(e)})
         raise ValueError(f"Failed to load adapter '{adapter_name}': {e}")
@@ -144,19 +132,26 @@ class Overseer:
     
     Provides CLI-agnostic event processing through handlers.
     Adapters are loaded externally and handle CLI-specific logic.
+    
+    Handler Response Contract:
+        All handlers must return HandlerResponse TypedDict with:
+        - decision: "allow" or "deny"
+        - reason: Explanation for the decision
+        - timestamp: ISO 8601 timestamp
+        - source: Source system identifier
     """
     
     def __init__(self):
         """Initialize Overseer with handler registry."""
-        self.handlers: Dict[str, Callable[[StandardEvent], Dict[str, Any]]] = {}
+        self.handlers: Dict[str, Callable[[StandardEvent], HandlerResponse]] = {}
     
-    def register_handler(self, event_type: str, handler: Callable[[StandardEvent], Dict[str, Any]]) -> None:
+    def register_handler(self, event_type: str, handler: Callable[[StandardEvent], HandlerResponse]) -> None:
         """
         Register a handler for a specific event type.
         
         Args:
             event_type: Event type to handle (e.g., "pre_tool_use")
-            handler: Callable that processes the event
+            handler: Callable that processes the event and returns HandlerResponse
         
         Raises:
             ValueError: If event_type is empty
@@ -170,7 +165,7 @@ class Overseer:
             "status": "registered"
         })
     
-    def handle_event(self, standard_event: StandardEvent) -> Dict[str, Any]:
+    def handle_event(self, standard_event: StandardEvent) -> HandlerResponse:
         """
         Handle a standard event through the Overseer core.
         
@@ -178,7 +173,7 @@ class Overseer:
             standard_event: StandardEvent object with converted event data
             
         Returns:
-            Response dictionary from handlers
+            HandlerResponse from handlers
         """
         trace_id = standard_event.trace_id
         
@@ -227,13 +222,13 @@ class Overseer:
             })
             return self._build_error_response(f"Processing error: {e}", standard_event.source)
     
-    def _build_error_response(self, error_message: str, source: str) -> Dict[str, Any]:
-        """Build a standardized error response."""
+    def _build_error_response(self, error_message: str, source: str) -> HandlerResponse:
+        """Build a standardized error response following HandlerResponse contract."""
         return {
             "decision": "deny",
             "reason": error_message,
-            "source": source,
-            "timestamp": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+            "timestamp": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3],
+            "source": source
         }
 
 
@@ -322,7 +317,12 @@ def main():
         supported_events = adapter.get_supported_event_types()
         
         for event_type in supported_events:
-            overseer.register_handler(event_type, lambda event: {"decision": "allow", "reason": "Default handler - allowing all"})
+            overseer.register_handler(event_type, lambda event: {
+                "decision": "allow",
+                "reason": "Default handler - allowing all",
+                "timestamp": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3],
+                "source": adapter.get_source_name()
+            })
         
         # Handle the event through Overseer core
         handler_response = overseer.handle_event(standard_event)

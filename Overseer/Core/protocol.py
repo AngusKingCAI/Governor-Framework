@@ -50,15 +50,27 @@ Usage:
 
 Dependencies:
 - No imports from other Overseer files (Layer Independence)
-- Standard library only (typing, json, os, sys, datetime, uuid modules)
+- Standard library only (typing, json, os, sys, datetime, uuid, abc modules)
+
+Validation Responsibility Hierarchy:
+- Protocol Layer: Schema definition only (no runtime validation)
+- Adapter Layer: CLI-specific format validation
+- Governance Layer: Security policy enforcement and runtime validation
+- Handler Layer: Business logic validation and decision making
+
+Schema Versioning:
+- Current schema version: 1.0.0
+- Add version field to event schemas for future compatibility tracking
+- Use semantic versioning for breaking changes
 """
 
-from typing import TypedDict, NotRequired, Dict, Any, Optional
+from typing import TypedDict, NotRequired, Dict, Any, Optional, Protocol as TypingProtocol, Callable
 import uuid
 import json
 import os
 import sys
 from datetime import datetime
+from abc import ABC, abstractmethod
 
 # Get protocol module directory for logging
 PROTOCOL_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -107,7 +119,119 @@ def log_protocol_event(component: str, data: Dict[str, Any]):
 
 
 # =============================================================================
-# SECTION 1: StandardEvent Class
+# SECTION 1: Protocol Contracts and Interfaces
+# =============================================================================
+
+class BaseAdapter(ABC):
+    """
+    Abstract base class defining adapter contract for CLI-specific event translation.
+    
+    All CLI adapters must inherit from this interface to ensure they implement
+    the required methods for event conversion and format translation.
+    
+    This interface enforces the Dependency Inversion Principle - Overseer depends
+    on this abstraction rather than concrete adapter implementations.
+    """
+    
+    @abstractmethod
+    def get_source_name(self) -> str:
+        """
+        Return the source name this adapter handles.
+        
+        Returns:
+            Source identifier (e.g., "devin", "claude", "cursor", "vscode")
+        """
+        pass
+    
+    @abstractmethod
+    def get_supported_event_types(self) -> list[str]:
+        """
+        Return list of StandardEvent type names this adapter handles.
+        
+        Returns:
+            List of event type names (snake_case) from EVENT_TYPES registry
+        """
+        pass
+    
+    @abstractmethod
+    def to_standard_event(self, hook_name: str, payload: Dict[str, Any]) -> 'StandardEvent':
+        """
+        Convert CLI-specific event to StandardEvent format.
+        
+        Args:
+            hook_name: CLI-specific hook name (e.g., "PreToolUse", "SessionStart")
+            payload: JSON payload from stdin
+            
+        Returns:
+            StandardEvent object with converted event data
+        """
+        pass
+    
+    @abstractmethod
+    def from_standard_response(self, response: Dict[str, Any], hook_name: str) -> Dict[str, Any]:
+        """
+        Convert StandardEvent response to CLI-specific format.
+        
+        Args:
+            response: StandardEvent response from handlers
+            hook_name: Original CLI hook name for response formatting
+            
+        Returns:
+            CLI-formatted response for stdout
+        """
+        pass
+
+
+class HandlerResponse(TypedDict):
+    """
+    Contract for handler response structure.
+    
+    All governance handlers must return responses matching this contract
+    to ensure proper communication between handlers and adapters.
+    
+    Required Fields:
+        decision: Governance decision ("allow" or "deny")
+        reason: Explanation for the decision
+        timestamp: ISO 8601 timestamp when decision was made
+        source: Source system identifier
+    
+    Optional Fields:
+        updated_input: Modified input data if decision allows with changes
+        additional_context: Additional context for decision explanation
+    """
+    decision: str  # "allow" or "deny"
+    reason: str
+    timestamp: str
+    source: str
+    updated_input: NotRequired[Dict[str, Any]]
+    additional_context: NotRequired[str]
+
+
+class AdapterMetadata(TypedDict):
+    """
+    Schema for adapter metadata preserved in event data.
+    
+    This schema captures CLI-specific information that may be needed
+    for debugging, audit trails, or future processing.
+    
+    Required Fields:
+        original_hook_name: Original CLI hook name before translation
+        cli: CLI source identifier
+    
+    Optional Fields:
+        adapter_version: Adapter implementation version
+        cli_version: CLI tool version if available
+        environment: Environment context (e.g., "development", "production")
+    """
+    original_hook_name: str
+    cli: str
+    adapter_version: NotRequired[str]
+    cli_version: NotRequired[str]
+    environment: NotRequired[str]
+
+
+# =============================================================================
+# SECTION 2: StandardEvent Class
 # =============================================================================
 
 class StandardEvent:
@@ -133,7 +257,8 @@ class StandardEvent:
         timestamp: str,
         data: Dict[str, Any],
         metadata: Optional[Dict[str, Any]] = None,
-        trace_id: Optional[str] = None
+        trace_id: Optional[str] = None,
+        schema_version: str = "1.0.0"
     ):
         self.event_type = event_type
         self.source = source
@@ -141,12 +266,14 @@ class StandardEvent:
         self.data = data
         self.metadata = metadata or {}
         self.trace_id = trace_id or str(uuid.uuid4())
+        self.schema_version = schema_version
         
         # Log event creation
         log_protocol_event("event_creation", {
             "event_type": event_type,
             "source": source,
             "trace_id": self.trace_id,
+            "schema_version": schema_version,
             "data_keys": list(data.keys()) if isinstance(data, dict) else "non_dict"
         })
     
@@ -158,12 +285,13 @@ class StandardEvent:
             "timestamp": self.timestamp,
             "data": self.data,
             "metadata": self.metadata,
-            "trace_id": self.trace_id
+            "trace_id": self.trace_id,
+            "schema_version": self.schema_version
         }
 
 
 # =============================================================================
-# SECTION 2: Event Schema Definitions (TypedDict)
+# SECTION 3: Event Schema Definitions (TypedDict)
 # =============================================================================
 
 class SessionStartEvent(TypedDict):
@@ -613,7 +741,7 @@ class ExtensibleEvent(TypedDict):
 
 
 # =============================================================================
-# SECTION 3: Event Type Registry
+# SECTION 4: Event Type Registry
 # =============================================================================
 
 EVENT_TYPES = {
@@ -642,11 +770,18 @@ log_protocol_event("protocol_init", {
 
 
 # =============================================================================
-# SECTION 4: Public API
+# SECTION 5: Public API
 # =============================================================================
 
 __all__ = [
+    # Core Event Class
     "StandardEvent",
+    
+    # Protocol Contracts and Interfaces
+    "BaseAdapter",
+    "HandlerResponse",
+    "AdapterMetadata",
+    
     # Core Universal Events
     "SessionStartEvent",
     "UserPromptSubmitEvent",
@@ -658,8 +793,16 @@ __all__ = [
     "PostCompactionEvent",
     "SubagentStartEvent",
     "SubagentStopEvent",
+    
     # Extensible Event
     "ExtensibleEvent",
+    
     # Registry
     "EVENT_TYPES",
+    
+    # Schema Version
+    "SCHEMA_VERSION",
 ]
+
+# Schema version constant
+SCHEMA_VERSION = "1.0.0"
