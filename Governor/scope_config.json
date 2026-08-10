@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "app_paths": [
+    "App"
+  ],
+  "harness_paths": [
+    "Governor",
+    "Harness",
+    "Workflow",
+    "Agents"
+  ],
+  "cross_scope_protection": {
+    "enabled": true,
+    "warning_only": false
+  }
+}

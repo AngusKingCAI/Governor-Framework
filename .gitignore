@@ -20,18 +20,6 @@ wheels/
 .installed.cfg
 *.egg
 
-# Devin CLI
-.devin/
-
-# Logs
-Governor/logs/
-*.log
-
-# State files (examples only)
-Governor/state/
-Governor/scope_config.json
-Governor/team_bypasses.json
-
 # IDE
 .vscode/
 .idea/

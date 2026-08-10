@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Exec(git init)",
+      "Exec(ls)",
+      "Exec(git status)",
+      "Exec(git add)",
+      "Exec(git commit)",
+      "Exec(git remote)",
+      "Exec(git branch)",
+      "Exec(git push)",
+      "Exec(gh auth)",
+      "Exec(cat)",
+      "Exec(mkdir)",
+      "Exec(rm)",
+      "Exec(python)",
+      "Exec(git log)",
+    ]
+  }
+}
