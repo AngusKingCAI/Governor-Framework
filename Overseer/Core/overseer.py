@@ -65,8 +65,9 @@ def get_adapter(adapter_name: str):
         Adapter instance
     """
     try:
-        # Define allowlist of allowed adapters from config
-        ALLOWED_ADAPTERS = {"devin", "claude", "cursor", "vscode"}
+        # Load allowlist from config for true adapter-agnostic behavior
+        config = load_config()
+        ALLOWED_ADAPTERS = set(config.get("allowed_adapters", ["devin"]))
         
         # Validate adapter name against allowlist
         if adapter_name not in ALLOWED_ADAPTERS:
