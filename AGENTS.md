@@ -16,7 +16,7 @@ A framework-agnostic AI agent governance system for controlling tool usage, enfo
 - **Modularity**: Follow consistent patterns, use existing libraries, implement base classes with ABC
 - **CLI-Agnostic**: No CLI-specific assumptions in core framework
 - **State Machine Correctness**: Ensure state transitions are valid and enforceable
-- **Logging Standardization**: All implementations must include comprehensive logging to layer-specific JSONL files (e.g., `logs/Adapter-Log-DATE.jsonl`, `logs/Overseer-Log-DATE.jsonl`)
+- **Logging Standardization**: All implementations must include comprehensive logging to layer-specific JSONL files (e.g., `logs/Adapter-Log-DATE.jsonl`, `logs/Overseer-Log-DATE.jsonl`, `logs/Protocol-Log-DATE.jsonl`). This applies even to schema-only definitions - logging initialization, usage, and errors is required regardless of validation scope.
 - **Engineering Principles**: Follow guidelines in SOFTWARE_ENGINEERING_PRINCIPLES.md for component modularity, standardization, KISS principle, and testing
 
 ## Document Index
