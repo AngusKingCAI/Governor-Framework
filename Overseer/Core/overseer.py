@@ -17,7 +17,17 @@ import uuid
 import importlib
 from datetime import datetime
 from typing import Dict, Any, Optional, Callable
-from .protocol import StandardEvent
+
+# Handle both module import and direct script execution
+try:
+    from .protocol import StandardEvent
+except ImportError:
+    # When run as script, add the Governor Framework root to path
+    # This allows importing Overseer as a package when run as: python Overseer/Core/overseer.py
+    framework_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    if framework_root not in sys.path:
+        sys.path.insert(0, framework_root)
+    from Overseer.Core.protocol import StandardEvent
 
 # Get Overseer package root
 OVERSEER_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
