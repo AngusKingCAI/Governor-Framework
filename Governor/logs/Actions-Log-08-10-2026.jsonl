@@ -1,0 +1,83 @@
+{"File": "check_dependencies.py", "action": "check_dependencies_action", "Time": "2026-08-10T03:09:36", "data": {"action": "installing_packages", "missing_packages": ["pyyaml"]}}
+{"File": "check_dependencies.py", "action": "check_dependencies_action", "Time": "2026-08-10T03:09:37", "data": {"action": "install_success", "package": "pyyaml"}}
+{"File": "check_dependencies.py", "action": "check_dependencies_action", "Time": "2026-08-10T03:09:37", "data": {"required_packages": ["pyyaml", "jsonschema", "ruff"], "missing_packages": ["pyyaml"], "installation_results": {"pyyaml": "success"}, "status": "attempted_installation"}}
+{"File": "validate_governance.py", "action": "validate_governance_action", "Time": "2026-08-10T03:09:37", "data": {"scope": "session_start", "action": "governance_validation"}}
+{"File": "validate_governance.py", "action": "validate_governance_action", "Time": "2026-08-10T03:09:37", "data": {"validation": "engine_load_success", "rule_count": 11}}
+{"File": "validate_governance.py", "action": "validate_governance_action", "Time": "2026-08-10T03:09:37", "data": {"result": "validation_passed"}}
+{"File": "check_dependencies.py", "action": "check_dependencies_action", "Time": "2026-08-10T03:12:05", "data": {"action": "installing_packages", "missing_packages": ["pyyaml"]}}
+{"File": "check_dependencies.py", "action": "check_dependencies_action", "Time": "2026-08-10T03:12:06", "data": {"action": "install_success", "package": "pyyaml"}}
+{"File": "check_dependencies.py", "action": "check_dependencies_action", "Time": "2026-08-10T03:12:06", "data": {"required_packages": ["pyyaml", "jsonschema", "ruff"], "missing_packages": ["pyyaml"], "installation_results": {"pyyaml": "success"}, "status": "attempted_installation"}}
+{"File": "validate_governance.py", "action": "validate_governance_action", "Time": "2026-08-10T03:12:06", "data": {"scope": "session_start", "action": "governance_validation"}}
+{"File": "validate_governance.py", "action": "validate_governance_action", "Time": "2026-08-10T03:12:06", "data": {"validation": "engine_load_success", "rule_count": 11}}
+{"File": "validate_governance.py", "action": "validate_governance_action", "Time": "2026-08-10T03:12:06", "data": {"result": "validation_passed"}}
+{"File": "check_dependencies.py", "action": "check_dependencies_action", "Time": "2026-08-10T03:12:17", "data": {"action": "installing_packages", "missing_packages": ["pyyaml"]}}
+{"File": "check_dependencies.py", "action": "check_dependencies_action", "Time": "2026-08-10T03:12:18", "data": {"action": "install_success", "package": "pyyaml"}}
+{"File": "check_dependencies.py", "action": "check_dependencies_action", "Time": "2026-08-10T03:12:18", "data": {"required_packages": ["pyyaml", "jsonschema", "ruff"], "missing_packages": ["pyyaml"], "installation_results": {"pyyaml": "success"}, "status": "attempted_installation"}}
+{"File": "validate_governance.py", "action": "validate_governance_action", "Time": "2026-08-10T03:12:18", "data": {"scope": "session_start", "action": "governance_validation"}}
+{"File": "validate_governance.py", "action": "validate_governance_action", "Time": "2026-08-10T03:12:18", "data": {"validation": "engine_load_success", "rule_count": 11}}
+{"File": "validate_governance.py", "action": "validate_governance_action", "Time": "2026-08-10T03:12:18", "data": {"result": "validation_passed"}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:12:42", "data": {"has_push_request": false, "prompt_length": 431, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:12:42", "data": {"has_question": false, "prompt_length": 431}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:13:33", "data": {"has_push_request": false, "prompt_length": 37, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:13:33", "data": {"has_question": false, "prompt_length": 37}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:14:27", "data": {"has_push_request": false, "prompt_length": 205, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:14:27", "data": {"has_question": false, "prompt_length": 205}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:16:57", "data": {"has_push_request": false, "prompt_length": 57, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:16:57", "data": {"has_question": false, "prompt_length": 57}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:18:15", "data": {"has_push_request": false, "prompt_length": 164, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:18:15", "data": {"has_question": false, "prompt_length": 164}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:18:49", "data": {"has_push_request": false, "prompt_length": 48, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:18:49", "data": {"has_question": false, "prompt_length": 48}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:19:33", "data": {"has_push_request": false, "prompt_length": 26, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:19:33", "data": {"has_question": true, "prompt_length": 26}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:19:59", "data": {"has_push_request": false, "prompt_length": 25, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:19:59", "data": {"has_question": true, "prompt_length": 25}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:21:19", "data": {"has_push_request": false, "prompt_length": 236, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:21:19", "data": {"has_question": true, "prompt_length": 236}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:24:04", "data": {"has_push_request": false, "prompt_length": 315, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:24:04", "data": {"has_question": false, "prompt_length": 315}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:25:01", "data": {"has_push_request": false, "prompt_length": 113, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:25:01", "data": {"has_question": false, "prompt_length": 113}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:25:58", "data": {"has_push_request": false, "prompt_length": 322, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:25:58", "data": {"has_question": false, "prompt_length": 322}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:26:28", "data": {"has_push_request": false, "prompt_length": 89, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:26:28", "data": {"has_question": true, "prompt_length": 89}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:27:31", "data": {"has_push_request": false, "prompt_length": 29, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:27:31", "data": {"has_question": true, "prompt_length": 29}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:29:30", "data": {"has_push_request": false, "prompt_length": 13, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:29:30", "data": {"has_question": true, "prompt_length": 13}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:29:37", "data": {"has_push_request": false, "prompt_length": 33, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:29:37", "data": {"has_question": false, "prompt_length": 33}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:30:11", "data": {"has_push_request": false, "prompt_length": 4, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:30:11", "data": {"has_question": false, "prompt_length": 4}}
+{"File": "complete_before_proceed.py", "action": "complete_before_proceed_action", "Time": "2026-08-10T03:30:20", "data": {"current_state": "testing_in_progress", "can_proceed": false, "blocked_reason": null, "evidence_count": 0}}
+{"File": "auto_format_python.py", "action": "auto_format_python_action", "Time": "2026-08-10T03:30:23", "data": {"file_path": "C:\\Governor Framework\\AGENTS.md", "is_python_file": false}}
+{"File": "validate_governance.py", "action": "validate_governance_action", "Time": "2026-08-10T03:30:23", "data": {"scope": "post_edit", "action": "governance_validation"}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:30:40", "data": {"has_push_request": false, "prompt_length": 4, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:30:40", "data": {"has_question": false, "prompt_length": 4}}
+{"File": "complete_before_proceed.py", "action": "complete_before_proceed_action", "Time": "2026-08-10T03:30:48", "data": {"current_state": "testing_in_progress", "can_proceed": false, "blocked_reason": null, "evidence_count": 0}}
+{"File": "auto_format_python.py", "action": "auto_format_python_action", "Time": "2026-08-10T03:30:51", "data": {"file_path": "C:\\Governor Framework\\AGENTS.md", "is_python_file": false}}
+{"File": "validate_governance.py", "action": "validate_governance_action", "Time": "2026-08-10T03:30:51", "data": {"scope": "post_edit", "action": "governance_validation"}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:50:10", "data": {"has_push_request": false, "prompt_length": 361, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:50:10", "data": {"has_question": true, "prompt_length": 361}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:51:38", "data": {"has_push_request": false, "prompt_length": 135, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:51:38", "data": {"has_question": true, "prompt_length": 135}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:53:51", "data": {"has_push_request": false, "prompt_length": 171, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:53:51", "data": {"has_question": false, "prompt_length": 171}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:55:28", "data": {"has_push_request": false, "prompt_length": 129, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:55:28", "data": {"has_question": false, "prompt_length": 129}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T03:58:16", "data": {"has_push_request": false, "prompt_length": 58, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T03:58:16", "data": {"has_question": false, "prompt_length": 58}}
+{"File": "complete_before_proceed.py", "action": "complete_before_proceed_action", "Time": "2026-08-10T03:58:33", "data": {"current_state": "testing_in_progress", "can_proceed": false, "blocked_reason": null, "evidence_count": 0}}
+{"File": "auto_format_python.py", "action": "auto_format_python_action", "Time": "2026-08-10T03:58:35", "data": {"file_path": "C:\\Governor Framework\\AGENTS.md", "is_python_file": false}}
+{"File": "validate_governance.py", "action": "validate_governance_action", "Time": "2026-08-10T03:58:35", "data": {"scope": "post_edit", "action": "governance_validation"}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T04:00:09", "data": {"has_push_request": false, "prompt_length": 31, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T04:00:09", "data": {"has_question": false, "prompt_length": 31}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T04:00:24", "data": {"has_push_request": false, "prompt_length": 2, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T04:00:24", "data": {"has_question": false, "prompt_length": 2}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T04:00:40", "data": {"has_push_request": false, "prompt_length": 158, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T04:00:40", "data": {"has_question": true, "prompt_length": 158}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T04:00:52", "data": {"has_push_request": false, "prompt_length": 3, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T04:00:52", "data": {"has_question": false, "prompt_length": 3}}
+{"File": "inject_push_permission.py", "action": "inject_push_permission_action", "Time": "2026-08-10T04:02:56", "data": {"has_push_request": false, "prompt_length": 225, "matched_keywords": []}}
+{"File": "inject_research_guidance.py", "action": "inject_research_guidance_action", "Time": "2026-08-10T04:02:56", "data": {"has_question": true, "prompt_length": 225}}

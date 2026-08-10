@@ -1,0 +1,9 @@
+{"File": "state_machine.py", "component": "StateMachine", "Time": "2026-08-10T03:09:37", "data": {"action": "set_phase", "old_phase": "EXECUTE", "new_phase": "EXECUTE"}}
+{"File": "state_machine.py", "component": "StateMachine", "Time": "2026-08-10T03:09:37", "data": {"action": "discover_agents", "status": "file_not_found", "path": "C:\\Governor Framework\\.devin\\agents.json"}}
+{"File": "state_machine.py", "component": "StateMachine", "Time": "2026-08-10T03:09:37", "data": {"action": "set_current_agent", "status": "success", "agent": "architect"}}
+{"File": "state_machine.py", "component": "StateMachine", "Time": "2026-08-10T03:12:06", "data": {"action": "set_phase", "old_phase": "EXECUTE", "new_phase": "EXECUTE"}}
+{"File": "state_machine.py", "component": "StateMachine", "Time": "2026-08-10T03:12:06", "data": {"action": "discover_agents", "status": "file_not_found", "path": "C:\\Governor Framework\\.devin\\agents.json"}}
+{"File": "state_machine.py", "component": "StateMachine", "Time": "2026-08-10T03:12:06", "data": {"action": "set_current_agent", "status": "success", "agent": "architect"}}
+{"File": "state_machine.py", "component": "StateMachine", "Time": "2026-08-10T03:12:18", "data": {"action": "set_phase", "old_phase": "EXECUTE", "new_phase": "EXECUTE"}}
+{"File": "state_machine.py", "component": "StateMachine", "Time": "2026-08-10T03:12:18", "data": {"action": "discover_agents", "status": "file_not_found", "path": "C:\\Governor Framework\\.devin\\agents.json"}}
+{"File": "state_machine.py", "component": "StateMachine", "Time": "2026-08-10T03:12:18", "data": {"action": "set_current_agent", "status": "success", "agent": "architect"}}
