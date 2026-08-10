@@ -14,7 +14,13 @@ A framework-agnostic AI agent governance system for controlling tool usage, enfo
 - **Layer Independence**: Each layer must be independent with minimal coupling to other Overseer files
 - **Testing-First**: Never implement without a test plan. Test in order: implement → test → verify → fix
 - **Modularity**: Follow consistent patterns, use existing libraries, implement base classes with ABC
-- **CLI-Agnostic**: No CLI-specific assumptions in core framework
+- **True Agnosticism**: Core framework must make ZERO assumptions about adapters or environment
+  - No hardcoded event types or registries (must be dynamically registered by adapters)
+  - No hardcoded naming conventions (must be configurable)
+  - No CLI-specific assumptions in code or documentation
+  - Adapters should be the ONLY flexible component
+  - Protocol/Overseer layers must be completely environment-independent
+  - Core system must adapt to whatever adapters provide
 - **State Machine Correctness**: Ensure state transitions are valid and enforceable
 - **Logging Standardization**: All implementations must include comprehensive logging to layer-specific JSONL files (e.g., `logs/Adapter-Log-DATE.jsonl`, `logs/Overseer-Log-DATE.jsonl`, `logs/Protocol-Log-DATE.jsonl`). This applies even to schema-only definitions - logging initialization, usage, and errors is required regardless of validation scope.
 - **Engineering Principles**: Follow guidelines in SOFTWARE_ENGINEERING_PRINCIPLES.md for component modularity, standardization, KISS principle, and testing

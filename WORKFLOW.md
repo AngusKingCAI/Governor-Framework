@@ -100,6 +100,13 @@ Automated quality checks on plan:
 - **Dependency validation**: Are dependencies explicit and achievable?
 - **Modularity**: Does the plan maintain proper separation of concerns and correct dependency direction?
 - **Extensibility**: Does the plan support future growth and plugin architecture?
+- **True Agnosticism**: Does the core system make ZERO assumptions about adapters or environment?
+  - No hardcoded event types (must be dynamically registered by adapters)
+  - No hardcoded naming conventions (must be configurable)
+  - No CLI-specific assumptions in documentation or code
+  - Adapters should be the ONLY flexible component
+  - Core system must adapt to whatever adapters provide
+  - Protocol/Overseer layers must be completely environment-independent
 
 **Iteration Loop**: If evaluation gate fails, loop back to step 9 (PLAN) with specific feedback. Maximum 3 iterations to prevent runaway loops.
 
@@ -141,6 +148,11 @@ Automated quality checks on implementation:
 - **Validation synthesis**: Are all validation results acceptable?
 - **Modularity**: Does implementation maintain proper separation of concerns and correct dependency direction?
 - **Consistency**: Does implementation follow established code patterns and naming conventions?
+- **True Agnosticism**: Does implementation make ZERO assumptions about adapters or environment?
+  - No hardcoded event types or registry (must be dynamic)
+  - No hardcoded naming conventions (must be configurable)
+  - No CLI-specific references in code or documentation
+  - Core layers must work with ANY adapter structure
 
 **Iteration Loop**: If evaluation gate fails, loop back to step 12 (IMPLEMENT) with specific feedback. Maximum 3 iterations.
 
