@@ -30,7 +30,7 @@ Architecture Principles Compliance:
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from hashlib import sha256
 from json import JSONDecodeError, dumps, loads
@@ -53,7 +53,7 @@ class GovernanceDecision:
     rationale: str
     context: Dict[str, Any]
     evaluated_rules: List[Dict[str, Any]] = field(default_factory=list)
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
 @dataclass
@@ -101,7 +101,7 @@ class ProtocolLayer:
                 self.logger.error({
                     "File": "overseer.py",
                     "component": "ProtocolLayer",
-                    "Time": datetime.utcnow().isoformat(),
+                    "Time": datetime.now(timezone.utc).isoformat(),
                     "data": {
                         "event": "payload_validation_failed",
                         "missing_field": field
@@ -115,7 +115,7 @@ class ProtocolLayer:
         self.logger.info({
             "File": "overseer.py",
             "component": "ProtocolLayer",
-            "Time": datetime.utcnow().isoformat(),
+            "Time": datetime.now(timezone.utc).isoformat(),
             "data": {
                 "event": "payload_transformed",
                 "phase": phase,
@@ -147,7 +147,7 @@ class AuditLogger:
         self.log_dir.mkdir(parents=True, exist_ok=True)
         
         # Create date-specific log file
-        date_str = datetime.utcnow().strftime("%Y-%m-%d")
+        date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         log_file = self.log_dir / f"{component}-Log-{date_str}.jsonl"
         
         self.logger = getLogger(f"Overseer.{component}")
@@ -167,7 +167,7 @@ class AuditLogger:
         class JSONFormatter(Formatter):
             def format(self, record):
                 log_entry = {
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                     "level": record.levelname,
                     "message": record.getMessage(),
                     "File": getattr(record, "File", "unknown"),
@@ -217,7 +217,7 @@ class AuditLogger:
             log_entry["hash"] = entry_hash
             
             # Append to log (append-only)
-            log_file = self.log_dir / f"{self.component}-Log-{datetime.utcnow().strftime('%Y-%m-%d')}.jsonl"
+            log_file = self.log_dir / f"{self.component}-Log-{datetime.now(timezone.utc).strftime('%Y-%m-%d')}.jsonl"
             with open(log_file, 'a') as f:
                 f.write(dumps(log_entry) + '\n')
             
@@ -244,7 +244,7 @@ class AuditLogger:
     
     def verify_integrity(self) -> bool:
         """Verify audit log integrity using hash chain."""
-        log_file = self.log_dir / f"{self.component}-Log-{datetime.utcnow().strftime('%Y-%m-%d')}.jsonl"
+        log_file = self.log_dir / f"{self.component}-Log-{datetime.now(timezone.utc).strftime('%Y-%m-%d')}.jsonl"
         if not log_file.exists():
             return True
         
@@ -267,7 +267,7 @@ class AuditLogger:
                     self.logger.error({
                         "File": "overseer.py",
                         "component": "AuditLogger",
-                        "Time": datetime.utcnow().isoformat(),
+                        "Time": datetime.now(timezone.utc).isoformat(),
                         "data": {
                             "event": "log_tampering_detected",
                             "line": i
@@ -280,7 +280,7 @@ class AuditLogger:
                 self.logger.error({
                     "File": "overseer.py",
                     "component": "AuditLogger",
-                    "Time": datetime.utcnow().isoformat(),
+                    "Time": datetime.now(timezone.utc).isoformat(),
                     "data": {
                         "event": "integrity_verification_error",
                         "error": str(e)
@@ -360,7 +360,7 @@ class ConfigManager:
             self.audit_logger.logger.info({
                 "File": "overseer.py",
                 "component": "ConfigManager",
-                "Time": datetime.utcnow().isoformat(),
+                "Time": datetime.now(timezone.utc).isoformat(),
                 "data": {
                     "event": "config_reloaded",
                     "authorized_by": authorized_by,
@@ -403,7 +403,7 @@ class HookRegistry:
                 self.logger.error({
                     "File": "overseer.py",
                     "component": "HookRegistry",
-                    "Time": datetime.utcnow().isoformat(),
+                    "Time": datetime.now(timezone.utc).isoformat(),
                     "data": {
                         "event": "hook_type_not_allowed",
                         "hook_type": hook_type
@@ -421,7 +421,7 @@ class HookRegistry:
             self.logger.info({
                 "File": "overseer.py",
                 "component": "HookRegistry",
-                "Time": datetime.utcnow().isoformat(),
+                "Time": datetime.now(timezone.utc).isoformat(),
                 "data": {
                     "event": "hook_registered",
                     "hook_type": hook_type,
@@ -436,7 +436,7 @@ class HookRegistry:
             self.logger.warning({
                 "File": "overseer.py",
                 "component": "HookRegistry",
-                "Time": datetime.utcnow().isoformat(),
+                "Time": datetime.now(timezone.utc).isoformat(),
                 "data": {
                     "event": "hook_type_not_found",
                     "hook_type": hook_type
@@ -459,7 +459,7 @@ class HookRegistry:
                 self.logger.error({
                     "File": "overseer.py",
                     "component": "HookRegistry",
-                    "Time": datetime.utcnow().isoformat(),
+                    "Time": datetime.now(timezone.utc).isoformat(),
                     "data": {
                         "event": "hook_execution_error",
                         "hook_type": hook_type,
@@ -529,7 +529,7 @@ class PolicyCoordinator:
                     self.logger.error({
                         "File": "overseer.py",
                         "component": "PolicyCoordinator",
-                        "Time": datetime.utcnow().isoformat(),
+                        "Time": datetime.now(timezone.utc).isoformat(),
                         "data": {
                             "event": "policy_evaluation_error",
                             "policy_id": policy.get("id", "unknown"),
@@ -568,7 +568,7 @@ class PolicyCoordinator:
             self.logger.error({
                 "File": "overseer.py",
                 "component": "PolicyCoordinator",
-                "Time": datetime.utcnow().isoformat(),
+                "Time": datetime.now(timezone.utc).isoformat(),
                 "data": {
                     "event": "policy_coordinator_error",
                     "error": str(e)
@@ -619,7 +619,7 @@ class EmergencyControls:
             self.logger.critical({
                 "File": "overseer.py",
                 "component": "EmergencyControls",
-                "Time": datetime.utcnow().isoformat(),
+                "Time": datetime.now(timezone.utc).isoformat(),
                 "data": {
                     "event": "emergency_halt",
                     "scope": scope,
@@ -640,7 +640,7 @@ class EmergencyControls:
             self.logger.info({
                 "File": "overseer.py",
                 "component": "EmergencyControls",
-                "Time": datetime.utcnow().isoformat(),
+                "Time": datetime.now(timezone.utc).isoformat(),
                 "data": {
                     "event": "emergency_resume",
                     "authorized_by": authorized_by,
@@ -693,7 +693,7 @@ class Overseer:
         self.logger.info({
             "File": "overseer.py",
             "component": "Overseer",
-            "Time": datetime.utcnow().isoformat(),
+            "Time": datetime.now(timezone.utc).isoformat(),
             "data": {
                 "event": "overseer_initialized",
                 "config_path": config_path
@@ -753,7 +753,7 @@ class Overseer:
             self.logger.warning({
                 "File": "overseer.py",
                 "component": "Overseer",
-                "Time": datetime.utcnow().isoformat(),
+                "Time": datetime.now(timezone.utc).isoformat(),
                 "data": {
                     "event": "hook_blocked_emergency_halt",
                     "hook_type": hook_type
