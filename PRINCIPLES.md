@@ -1037,6 +1037,45 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
+## Principle 35: Configurable Hook Timeouts
+
+**Definition**: Hooks must have configurable timeout boundaries defined in the config.json where the adapter is selected. This prevents hung hooks from deadlocking the governed agent and allows different adapters to specify appropriate timeout values.
+
+**Desired State**:
+
+### 35.1 Config-Based Timeout Definition
+- **Target Behavior**: Hook timeouts are defined in config.json alongside adapter selection
+- **Implementation**: config.json specifies timeout values for each hook type
+- **Example**: config.json defines "pre_tool_use_timeout": 10, "post_tool_use_timeout": 5
+- **Benefit**: Different adapters can specify appropriate timeout values
+
+### 35.2 Timeout Default Behavior
+- **Target Behavior**: Hooks have default timeout when not specified in config
+- **Implementation**: Default timeout of 10 seconds for governance checks
+- **Example**: If config doesn't specify timeout, use 10-second default
+- **Benefit**: Reasonable default for simple governance checks
+
+### 35.3 Timeout Enforcement
+- **Target Behavior**: Hooks are aborted if they exceed timeout
+- **Implementation**: Hook execution is terminated after timeout, action blocked
+- **Example**: If hook runs longer than timeout, tool execution is denied
+- **Benefit**: Prevents hung hooks from deadlocking the agent
+
+### 35.4 Per-Hook Type Configuration
+- **Target Behavior**: Different hook types can have different timeout values
+- **Implementation**: config.json can specify timeouts per hook type
+- **Example**: PreToolUse: 10s, PostToolUse: 5s, complex checks: 30s
+- **Benefit**: Simple checks run faster, complex checks have more time
+
+**Success Criteria**:
+- Hook timeouts defined in config.json alongside adapter selection
+- Default timeout of 10 seconds for unspecified hooks
+- Hooks are aborted on timeout to prevent deadlocks
+- Different hook types can have different timeout values
+- Timeout values are adaptable per adapter requirements
+
+---
+
 ## Principle 24: Hook Composability
 
 **Definition**: Multiple hooks should be composable without conflicts. Users should be able to chain multiple governance hooks together.
