@@ -935,6 +935,86 @@ def create_overseer(config_path: str = "Overseer/Config/config.json") -> Oversee
 
 
 if __name__ == "__main__":
-    # Test initialization
-    overseer = create_overseer()
-    print("Overseer initialized successfully")
+    import sys
+    import json
+    from pathlib import Path
+    
+    # CLI entry point for Devin hooks
+    # Usage: python overseer.py <hook_event_name>
+    # Receives hook event data on stdin (JSON)
+    # Returns decision on stdout (JSON)
+    #
+    # This entry point orchestrates:
+    # 1. Load adapter from config
+    # 2. Transform CLI event to CanonicalPayload
+    # 3. Evaluate governance decision
+    # 4. Return decision to CLI
+    
+    if len(sys.argv) < 2:
+        print(json.dumps({"decision": "block", "reason": "Missing hook event name"}))
+        sys.exit(2)
+    
+    hook_event_name = sys.argv[1]
+    
+    # Read event data from stdin
+    try:
+        event_data = json.load(sys.stdin)
+    except json.JSONDecodeError as e:
+        print(json.dumps({"decision": "block", "reason": f"Invalid JSON input: {str(e)}"}))
+        sys.exit(2)
+    
+    # Load configuration
+    config_path = "Overseer/Config/config.json"
+    if not Path(config_path).exists():
+        print(json.dumps({"decision": "block", "reason": "Config file not found"}))
+        sys.exit(2)
+    
+    try:
+        # Load configuration
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+        
+        # Load adapter based on config
+        adapter_name = config.get("adapter", "devin")
+        sys.path.append(str(Path(__file__).parent.parent / "Adapter"))
+        
+        if adapter_name == "devin":
+            from devin_adapter import DevinAdapter
+            adapter = DevinAdapter(config, "Overseer/Logs")
+        else:
+            # For future adapters (claude, cursor, vscode)
+            print(json.dumps({"decision": "block", "reason": f"Adapter {adapter_name} not yet implemented"}))
+            sys.exit(2)
+        
+        # Transform event to canonical payload
+        payload = adapter.transform_event({
+            "hook_event_name": hook_event_name,
+            **event_data
+        })
+        
+        # Create Overseer instance
+        overseer = Overseer(config_path)
+        
+        # Evaluate governance decision
+        decision = overseer.evaluate_policies(payload)
+        
+        # Return decision to Devin CLI
+        if decision.decision == "deny":
+            print(json.dumps({
+                "decision": "block",
+                "reason": decision.rationale
+            }))
+            sys.exit(2)
+        else:
+            print(json.dumps({
+                "decision": "approve",
+                "reason": decision.rationale
+            }))
+            sys.exit(0)
+            
+    except Exception as e:
+        print(json.dumps({
+            "decision": "block",
+            "reason": f"Governance error: {str(e)}"
+        }))
+        sys.exit(2)
