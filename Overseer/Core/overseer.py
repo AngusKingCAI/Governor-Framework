@@ -33,9 +33,12 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from hashlib import sha256
+from hmac import compare_digest
 from json import JSONDecodeError, dumps, loads
 from logging import FileHandler, Formatter, getLogger, Logger
+from os import chmod, fsync
 from pathlib import Path
+from platform import system as platform_system
 from re import compile as regex_compile, IGNORECASE
 from threading import Lock
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple
@@ -137,7 +140,6 @@ class AuditLogger:
     SECRET_PATTERNS = {
         'api_key': regex_compile(r'api[_-]?key["\']?\s*[:=]\s*["\']?([a-zA-Z0-9_\-]{16,})["\']?', IGNORECASE),
         'password': regex_compile(r'password["\']?\s*[:=]\s*["\']?([^"\']{6,})["\']?', IGNORECASE),
-        'token': regex_compile(r'["\']?([a-zA-Z0-9_\-]{20,})["\']?', IGNORECASE),
         'sk_': regex_compile(r'sk[_-]?[a-zA-Z0-9_\-]{16,}', IGNORECASE),
     }
     
@@ -145,22 +147,32 @@ class AuditLogger:
         self.log_dir = Path(log_dir)
         self.component = component
         self.log_dir.mkdir(parents=True, exist_ok=True)
-        
+        # Set restrictive directory permissions (owner only) on Unix-like systems
+        if platform_system() != 'Windows':
+            chmod(self.log_dir, 0o700)
+
         # Create date-specific log file
         date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         log_file = self.log_dir / f"{component}-Log-{date_str}.jsonl"
-        
+
         self.logger = getLogger(f"Overseer.{component}")
         self.logger.setLevel(getLogger().level)
-        
+
         # File handler with JSON formatter
         handler = FileHandler(log_file)
         handler.setFormatter(self._json_formatter())
         self.logger.addHandler(handler)
-        
+
+        # Set restrictive file permissions (owner read/write only) on Unix-like systems
+        if platform_system() != 'Windows':
+            chmod(log_file, 0o600)
+
         # Tamper-evident audit trail
         self.previous_hash = self._get_last_hash(log_file)
         self.hash_lock = Lock()
+        # NOTE: hash_lock provides thread safety within a single process.
+        # Multi-process concurrent writes should be handled at deployment/infrastructure
+        # level (e.g., single-writer architecture, external log aggregation service).
     
     def _json_formatter(self) -> Formatter:
         """Custom JSON formatter using stdlib only."""
@@ -220,7 +232,12 @@ class AuditLogger:
             log_file = self.log_dir / f"{self.component}-Log-{datetime.now(timezone.utc).strftime('%Y-%m-%d')}.jsonl"
             with open(log_file, 'a') as f:
                 f.write(dumps(log_entry) + '\n')
-            
+                f.flush()
+                fsync(f.fileno())
+            # Ensure file permissions are set (important for new files on day rollover)
+            if platform_system() != 'Windows':
+                chmod(log_file, 0o600)
+
             self.previous_hash = entry_hash
     
     def _redact_secrets(self, data: Any) -> Any:
@@ -228,6 +245,7 @@ class AuditLogger:
         if isinstance(data, str):
             for secret_type, pattern in self.SECRET_PATTERNS.items():
                 data = pattern.sub(f'{secret_type}: [REDACTED]', data)
+            return data
         elif isinstance(data, dict):
             # Also check dict keys for secret indicators
             redacted_dict = {}
@@ -263,7 +281,7 @@ class AuditLogger:
                     previous_hash
                 )
                 
-                if computed_hash != entry_hash:
+                if not compare_digest(computed_hash, entry_hash):
                     self.logger.error({
                         "File": "overseer.py",
                         "component": "AuditLogger",
@@ -303,6 +321,7 @@ class ConfigManager:
         self.audit_logger = audit_logger
         self.config_hash = self._compute_config_hash()
         self._verify_config_integrity()
+        self._store_config_hash()  # Store trusted hash for future verification
         self.config = self._load_config()
         self.config_lock = Lock()
     
@@ -314,10 +333,22 @@ class ConfigManager:
         return ""
     
     def _verify_config_integrity(self):
-        """Verify configuration integrity on load."""
+        """Verify configuration integrity on load against stored trusted hash."""
         current_hash = self._compute_config_hash()
-        if current_hash and self.config_hash and current_hash != self.config_hash:
-            raise ValueError("Configuration integrity check failed - possible tampering")
+        hash_file = self.config_path.with_suffix('.sha256')
+        
+        # If sidecar hash file exists, verify against it
+        if hash_file.exists():
+            stored_hash = hash_file.read_text().strip()
+            if current_hash and stored_hash and not compare_digest(current_hash, stored_hash):
+                raise ValueError("Configuration integrity check failed - possible tampering")
+        # If no sidecar exists, this is first run - we'll store it after verification
+    
+    def _store_config_hash(self):
+        """Store trusted configuration hash to sidecar file for future verification."""
+        if self.config_hash:
+            hash_file = self.config_path.with_suffix('.sha256')
+            hash_file.write_text(self.config_hash)
     
     def _load_config(self) -> Dict[str, Any]:
         """Load configuration from file."""
@@ -350,11 +381,33 @@ class ConfigManager:
         return self.config.get("governance", {})
     
     def reload_config(self, authorized_by: str, reason: str):
-        """Reload configuration with authorization tracking."""
+        """Reload configuration with authorization tracking and integrity verification."""
         with self.config_lock:
             old_hash = self.config_hash
-            self.config_hash = self._compute_config_hash()
+            new_hash = self._compute_config_hash()
+            
+            # Verify integrity against stored hash
+            hash_file = self.config_path.with_suffix('.sha256')
+            if hash_file.exists():
+                stored_hash = hash_file.read_text().strip()
+                if new_hash and stored_hash and not compare_digest(new_hash, stored_hash):
+                    self.audit_logger.logger.error({
+                        "File": "overseer.py",
+                        "component": "ConfigManager",
+                        "Time": datetime.now(timezone.utc).isoformat(),
+                        "data": {
+                            "event": "config_reload_integrity_failed",
+                            "authorized_by": authorized_by,
+                            "reason": reason,
+                            "stored_hash": stored_hash,
+                            "current_hash": new_hash
+                        }
+                    })
+                    raise ValueError("Configuration integrity check failed on reload - possible tampering")
+            
+            self.config_hash = new_hash
             self.config = self._load_config()
+            self._store_config_hash()  # Update trusted hash after successful reload
             
             # Log configuration change
             self.audit_logger.logger.info({
@@ -431,7 +484,20 @@ class HookRegistry:
             })
     
     def execute_hook(self, hook_type: str, event: Dict[str, Any], timeout: float = 10.0) -> HookResult:
-        """Execute hook with fail-closed semantics and timeout enforcement (Principle 13)."""
+        """Execute hook with fail-closed semantics.
+
+        Args:
+            hook_type: Type of hook to execute
+            event: Event data to pass to hook
+            timeout: Configured timeout value (in seconds) for adapter/infrastructure enforcement.
+                    Note: Core does not enforce timeout cross-platform; timeout parameter is
+                    provided for configuration purposes. Actual timeout enforcement should be
+                    implemented at the adapter/infrastructure layer using platform-appropriate
+                    mechanisms (signal.alarm on Unix, threading.Timer, or async timeout).
+
+        Returns:
+            HookResult with decision, reason, and optional modified context
+        """
         if hook_type not in self.hooks:
             self.logger.warning({
                 "File": "overseer.py",
@@ -443,11 +509,10 @@ class HookRegistry:
                 }
             })
             return HookResult(decision="allow", reason="No hooks registered")
-        
+
         for priority, hook in self.hooks[hook_type]:
             try:
-                # Execute with timeout enforcement
-                # Note: For production, use signal.alarm or threading for true timeout
+                # Execute hook (timeout enforcement is adapter/infrastructure responsibility)
                 result = hook(event)
                 
                 if result.decision == "deny":
@@ -478,7 +543,20 @@ class HookRegistry:
 # ============================================================================
 
 class PolicyCoordinator:
-    """Stateless policy evaluation coordinator (Principle 4, 6, 7)."""
+    """
+    Stateless policy evaluation coordinator (Principle 4, 6, 7).
+
+    NOTE: This is a placeholder coordinator designed to integrate with external
+    policy engines (OPA, Cedar, etc.) or adapter-specific policy implementations.
+    The framework does not include a built-in policy evaluation engine to maintain
+    true agnosticism (Principle 1) and allow adapters to integrate with their
+    preferred policy systems.
+
+    Integration options:
+    - External policy engines via hooks
+    - Adapter-specific policy loading
+    - Custom policy evaluators registered as hooks
+    """
     
     def __init__(self, config: Dict[str, Any], audit_logger: AuditLogger):
         self.config = config
@@ -584,15 +662,29 @@ class PolicyCoordinator:
             )
     
     def _load_policies(self) -> List[Dict[str, Any]]:
-        """Load policies from configuration (cached)."""
-        # Placeholder: In production, load from Overseer/Rules/
-        # For now, return empty list - policies to be implemented separately
+        """
+        Load policies from configuration (cached).
+
+        PLACEHOLDER: This method is intended to be overridden or replaced by
+        adapter-specific implementations that load policies from external sources
+        (OPA, Cedar, YAML files, etc.). The current implementation returns an
+        empty list, resulting in default deny behavior (fail-closed).
+        """
+        # Placeholder: In production, load from Overseer/Rules/ or external policy engine
+        # For now, return empty list - policies to be implemented by adapters
         return []
-    
+
     def _evaluate_policy(self, policy: Dict[str, Any], context: Dict[str, Any]) -> HookResult:
-        """Evaluate single policy against context."""
-        # Placeholder: Policy evaluation logic to be implemented separately
-        # This is the coordinator pattern - actual policy execution in separate components
+        """
+        Evaluate single policy against context.
+
+        PLACEHOLDER: This method is intended to be overridden or replaced by
+        adapter-specific implementations that integrate with external policy engines.
+        The coordinator pattern delegates actual policy evaluation to separate
+        components (OPA, Cedar, custom evaluators, etc.).
+        """
+        # Placeholder: Policy evaluation logic to be implemented by adapters
+        # This follows the coordinator pattern - actual policy execution in separate components
         return HookResult(decision="allow", reason="Policy evaluation not yet implemented")
 
 
