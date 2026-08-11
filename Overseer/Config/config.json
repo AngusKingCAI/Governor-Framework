@@ -1,0 +1,117 @@
+{
+  "adapter": "devin",
+  "allowed_adapters": [
+    "devin",
+    "claude",
+    "cursor",
+    "vscode"
+  ],
+  "adapter_specific_settings": {
+    "devin": {
+      "description": "Devin CLI adapter",
+      "event_format": "stdin/stdout JSON",
+      "supported_events": [
+        "SessionStart",
+        "UserPromptSubmit",
+        "PreToolUse",
+        "PostToolUse",
+        "PermissionRequest",
+        "Stop",
+        "SessionEnd",
+        "PostCompaction"
+      ],
+      "config": {
+        "timeout": 10,
+        "log_level": "INFO"
+      }
+    },
+    "claude": {
+      "description": "Claude Code adapter",
+      "event_format": "stdin/stdout JSON",
+      "supported_events": [
+        "SessionStart",
+        "Setup",
+        "UserPromptSubmit",
+        "UserPromptExpansion",
+        "PreToolUse",
+        "PermissionRequest",
+        "PermissionDenied",
+        "PostToolUse",
+        "PostToolUseFailure",
+        "PostToolBatch",
+        "Notification",
+        "MessageDisplay",
+        "SubagentStart",
+        "SubagentStop",
+        "TaskCreated",
+        "TaskCompleted",
+        "Stop",
+        "StopFailure",
+        "TeammateIdle",
+        "InstructionsLoaded",
+        "ConfigChange",
+        "CwdChanged",
+        "DirectoryAdded",
+        "FileChanged",
+        "WorktreeCreate",
+        "WorktreeRemove",
+        "PreCompact",
+        "PostCompact",
+        "Elicitation",
+        "ElicitationResult",
+        "SessionEnd"
+      ]
+    },
+    "cursor": {
+      "description": "Cursor IDE adapter",
+      "event_format": "subprocess-over-stdio JSON",
+      "supported_events": [
+        "sessionStart",
+        "sessionEnd",
+        "preToolUse",
+        "postToolUse",
+        "postToolUseFailure",
+        "subagentStart",
+        "subagentStop",
+        "beforeShellExecution",
+        "afterShellExecution",
+        "beforeMCPExecution",
+        "afterMCPExecution",
+        "beforeReadFile",
+        "afterFileEdit",
+        "beforeSubmitPrompt",
+        "preCompact",
+        "stop",
+        "afterAgentResponse",
+        "afterAgentThought",
+        "beforeTabFileRead",
+        "afterTabFileEdit",
+        "workspaceOpen"
+      ]
+    },
+    "vscode": {
+      "description": "VS Code Copilot adapter",
+      "event_format": "stdin/stdout JSON",
+      "supported_events": [
+        "SessionStart",
+        "UserPromptSubmit",
+        "PreToolUse",
+        "PostToolUse",
+        "PreCompact",
+        "SubagentStart",
+        "SubagentStop",
+        "Stop"
+      ]
+    }
+  },
+  "governance": {
+    "default_mode": "blocking",
+    "conflict_resolution": "deny_wins",
+    "emergency_halt": false
+  },
+  "logging": {
+    "enabled": true,
+    "log_level": "info",
+    "log_directory": "Overseer/Logs"
+  }
+}
