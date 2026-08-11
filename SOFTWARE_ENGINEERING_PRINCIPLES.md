@@ -216,12 +216,17 @@ This document defines the core software engineering principles that guide all Ov
 - **Complexity Management**: Break down complex operations into smaller, testable functions
 
 ### Security Considerations
-- **Input Validation**: Validate all external inputs before processing
-- **Secrets Management**: Never log or expose secrets, API keys, or sensitive data
-- **Principle of Least Privilege**: Implement appropriate access controls
-- **Secure Defaults**: Default to secure configurations rather than convenient ones
-- **Dependency Management**: Use vetted dependencies and keep them updated
+- **Input Validation**: Validate all external inputs before processing (ARCHITECTURE.md Principle 23)
+- **Secrets Management**: Never log or expose secrets, API keys, or sensitive data (ARCHITECTURE.md Principle 21)
+- **Principle of Least Privilege**: Implement appropriate access controls (ARCHITECTURE.md Principle 25)
+- **Secure Defaults**: Default to secure configurations rather than convenient ones (ARCHITECTURE.md Principle 5)
+- **Dependency Management**: Use vetted dependencies and keep them updated (IMPLEMENTATION.md - zero external dependencies)
 - **Error Information**: Avoid exposing sensitive information in error messages
+- **Prompt Injection Defense**: Treat all external data as untrusted, implement structural separation (ARCHITECTURE.md Principle 23)
+- **Defense in Depth**: Implement multiple overlapping security layers (ARCHITECTURE.md Principle 24)
+- **Zero Trust**: Verify explicitly, apply least privilege, assume breach (ARCHITECTURE.md Principle 25)
+- **Reversibility-Weighted Controls**: Lighter oversight for reversible actions, mandatory gates for irreversible (ARCHITECTURE.md Principle 26)
+- **Subagent Isolation**: No automatic permission inheritance, scoped delegation tokens (ARCHITECTURE.md Principle 27)
 
 ## Research Sources
 
@@ -233,3 +238,15 @@ These principles are based on research from:
 - ISTQB software testing principles
 - Industry best practices from Microsoft, IBM, and leading tech companies
 - The Unix philosophy of modularity and simplicity
+- OWASP AI Agent Security Cheat Sheet (2026)
+- NIST AI Risk Management Framework
+- ISO/IEC 42001 AI Management System Standard
+
+## Alignment with Overseer Architecture
+
+These engineering principles align with and support the Overseer architectural principles:
+- **Component Modularity** supports ARCHITECTURE.md Principle 2 (Modular Architecture)
+- **Standardized Logging** implements ARCHITECTURE.md Principle 9 (Audit Trail and Observability)
+- **Security Considerations** implement ARCHITECTURE.md Principles 21-27 (Security principles)
+- **Test Principles** support ARCHITECTURE.md Principle 5 (In-Path Fail-Closed Enforcement)
+- **Implementation Standards** follow IMPLEMENTATION.md patterns and conventions

@@ -226,10 +226,19 @@ Create custom profiles for specialized domains:
 ### Hook-Based Enforcement
 
 **Use existing Overseer hooks at:**
-- **Phase transitions**: Prevent advancement without proper completion
-- **Subagent spawning**: Validate subagent selection and configuration
-- **Result synthesis**: Ensure synthesis follows governance rules
-- **Evaluation gates**: Enforce iteration limits and escalation
+- **Phase transitions**: Prevent advancement without proper completion (ARCHITECTURE.md Principle 5)
+- **Subagent spawning**: Validate subagent selection and configuration (ARCHITECTURE.md Principle 1)
+- **Result synthesis**: Ensure synthesis follows governance rules (ARCHITECTURE.md Principle 4)
+- **Evaluation gates**: Enforce iteration limits and escalation (ARCHITECTURE.md Principle 15)
+
+### Subagent Security Enforcement
+
+**Apply security principles from ARCHITECTURE.md:**
+- **Input Validation** (Principle 23): Treat subagent inputs as untrusted, validate before processing
+- **Defense in Depth** (Principle 24): Layered security checks at orchestration, spawning, and execution
+- **Least Privilege** (Principle 25): Subagents receive minimum necessary permissions per task
+- **Reversibility-Weighted** (Principle 26): Reversible subagent tasks autonomous, irreversible require approval
+- **Subagent Isolation** (Principle 27): No automatic permission inheritance, scoped delegation tokens
 
 ### State Machine Tracking
 

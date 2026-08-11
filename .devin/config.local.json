@@ -19,7 +19,12 @@
       "Exec(git show)",
       "Exec(touch)",
       "Exec(tree)",
-      "Exec(true)"
+      "Exec(true)",
+      "Exec(tail)",
+      "Exec(sed)",
+      "Exec(wc)",
+      "Exec(grep)",
+      "Exec(cp)"
     ]
   }
 }

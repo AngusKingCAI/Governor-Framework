@@ -93,20 +93,26 @@ Present synthesized research findings for user approval with supporting evidence
 Create implementation strategy based on approved research. Plan must be detailed and actionable with explicit dependencies.
 
 ### 10. EVALUATION_GATE (Iteration Loop)
-Automated quality checks on plan:
+Automated quality checks on plan (aligned with ARCHITECTURE.md principles):
 - **Completeness**: Are all required components addressed?
 - **Feasibility**: Is the plan technically achievable?
 - **Risk alignment**: Does the plan match the risk classification?
 - **Dependency validation**: Are dependencies explicit and achievable?
-- **Modularity**: Does the plan maintain proper separation of concerns and correct dependency direction?
-- **Extensibility**: Does the plan support future growth and plugin architecture?
-- **True Agnosticism**: Does the core system make ZERO assumptions about adapters or environment?
+- **Modularity**: Does the plan maintain proper separation of concerns and correct dependency direction? (ARCHITECTURE.md Principle 2)
+- **Extensibility**: Does the plan support future growth and plugin architecture? (ARCHITECTURE.md Principle 3)
+- **True Agnosticism**: Does the core system make ZERO assumptions about adapters or environment? (ARCHITECTURE.md Principle 1)
   - No hardcoded event types (must be dynamically registered by adapters)
   - No hardcoded naming conventions (must be configurable)
   - No CLI-specific assumptions in documentation or code
   - Adapters should be the ONLY flexible component
   - Core system must adapt to whatever adapters provide
   - Protocol/Overseer layers must be completely environment-independent
+- **Security Alignment**: Does the plan follow security principles? (ARCHITECTURE.md Principles 23-27)
+  - Input validation and prompt injection defense
+  - Defense in depth with layered security
+  - Least privilege and zero trust enforcement
+  - Reversibility-weighted risk enforcement
+  - Subagent isolation and delegation boundaries
 
 **Iteration Loop**: If evaluation gate fails, loop back to step 9 (PLAN) with specific feedback. Maximum 3 iterations to prevent runaway loops.
 
@@ -141,18 +147,20 @@ Parent agent synthesizes validation results:
 Present implementation changes and validation synthesis for user verification. Use ask_user_question tool for structured review and approval process. User must review and approve changes.
 
 ### 16. EVALUATION_GATE (Iteration Loop)
-Automated quality checks on implementation:
-- **Code quality**: Does code meet standards?
-- **Compliance**: Are governance rules followed?
-- **Security**: Are security requirements met?
+Automated quality checks on implementation (aligned with ARCHITECTURE.md and IMPLEMENTATION.md):
+- **Code quality**: Does code meet standards? (SOFTWARE_ENGINEERING_PRINCIPLES.md)
+- **Compliance**: Are governance rules followed? (ARCHITECTURE.md Principle 4)
+- **Security**: Are security requirements met? (ARCHITECTURE.md Principles 23-27)
 - **Validation synthesis**: Are all validation results acceptable?
-- **Modularity**: Does implementation maintain proper separation of concerns and correct dependency direction?
-- **Consistency**: Does implementation follow established code patterns and naming conventions?
-- **True Agnosticism**: Does implementation make ZERO assumptions about adapters or environment?
+- **Modularity**: Does implementation maintain proper separation of concerns and correct dependency direction? (ARCHITECTURE.md Principle 2)
+- **Consistency**: Does implementation follow established code patterns and naming conventions? (IMPLEMENTATION.md)
+- **True Agnosticism**: Does implementation make ZERO assumptions about adapters or environment? (ARCHITECTURE.md Principle 1)
   - No hardcoded event types or registry (must be dynamic)
   - No hardcoded naming conventions (must be configurable)
   - No CLI-specific references in code or documentation
   - Core layers must work with ANY adapter structure
+- **Zero Dependencies**: Does core maintain zero external dependencies? (IMPLEMENTATION.md - JSON instead of pyyaml)
+- **Performance**: Does implementation avoid anti-patterns like synchronous file I/O? (IMPLEMENTATION.md - policy caching)
 
 **Iteration Loop**: If evaluation gate fails, loop back to step 12 (IMPLEMENT) with specific feedback. Maximum 3 iterations.
 
@@ -250,16 +258,18 @@ Task completion after user approval and proof bundle verification. Only then is 
 
 ## Strict Governance Principles
 
-- **Version control**: Every artifact must be version-controlled with metadata
-- **Parallel execution with coordination**: Independent tasks run in parallel with proper result synthesis
-- **Evaluation gates with iteration loops**: Must pass before state transitions, with limited iterations
-- **Evidence-based approval**: Human approval requires evidence review, not acknowledgment
-- **Immutable audit trail**: Audit trail is hash-verified and tamper-evident
+- **Version control**: Every artifact must be version-controlled with metadata (ARCHITECTURE.md Principle 4)
+- **Parallel execution with coordination**: Independent tasks run in parallel with proper result synthesis (SUBAGENT_ORCHESTRATION.md)
+- **Evaluation gates with iteration loops**: Must pass before state transitions, with limited iterations (ARCHITECTURE.md Principle 5)
+- **Evidence-based approval**: Human approval requires evidence review, not acknowledgment (ARCHITECTURE.md Principle 18)
+- **Immutable audit trail**: Audit trail is hash-verified and tamper-evident (ARCHITECTURE.md Principle 9)
 - **Proof bundles**: Enable regulatory compliance and audit reconstruction with full provenance
-- **Risk-based governance**: Risk classification determines required governance rigor
-- **Agent-agnostic design**: Overseer Framework state machine supports different workflows
-- **Cost-aware parallelism**: Subagent usage is deliberate and justified by parallel benefits
-- **Comprehensive logging**: All implementations must include standardized logging to layer-specific JSONL files with consistent format and silent failure handling
+- **Risk-based governance**: Risk classification determines required governance rigor (ARCHITECTURE.md Principle 26)
+- **Agent-agnostic design**: Overseer Framework state machine supports different workflows (ARCHITECTURE.md Principle 1)
+- **Cost-aware parallelism**: Subagent usage is deliberate and justified by parallel benefits (SUBAGENT_ORCHESTRATION.md)
+- **Comprehensive logging**: All implementations must include standardized logging to layer-specific JSONL files with consistent format and silent failure handling (ARCHITECTURE.md Principle 9)
+- **Security-first development**: All implementations follow security principles (ARCHITECTURE.md Principles 23-27)
+- **Zero external dependencies**: Core framework maintains zero external dependencies (IMPLEMENTATION.md)
 
 ## Risk-Based Controls
 
