@@ -10,6 +10,38 @@ The workflow uses a **hybrid pattern** combining:
 - **Iteration loops** at evaluation gates for quality enforcement
 - **DAG structure** for explicit dependency tracking and audit reconstruction
 
+## Critical Requirements
+
+### TDD Compliance (MANDATORY)
+**ALL implementations MUST follow Test-Driven Development (TDD) as explicitly required by SOFTWARE_ENGINEERING_PRINCIPLES.md and AGENTS.md:**
+
+**SOFTWARE_ENGINEERING_PRINCIPLES.md - Test Principles (Lines 141-197):**
+- "Follow TDD approach: write failing test, implement code, refactor (Red-Green-Refactor)"
+- "Write tests **before** writing functional code"
+- "Test list approach: plan tests first, then implement one at a time"
+- "Build comprehensive automated test suites"
+- "Single command execution of all tests"
+- "Confidence that passing tests means code is working"
+
+**AGENTS.md - Critical Rules:**
+- "Testing-First: Never implement without a test plan. Test in order: implement → test → verify → fix"
+
+**Workflow Compliance:**
+- Step 12 (CREATE_TEST_PLAN) is MANDATORY before implementation
+- Step 18 (RUN_TESTS) is MANDATORY after implementation
+- ALL tests MUST pass before completion
+- Implementation CANNOT proceed without test plan approval
+- Task CANNOT complete if any test fails
+
+**Violations:**
+- Skipping test plan creation = WORKFLOW VIOLATION
+- Implementing without tests = WORKFLOW VIOLATION
+- Proceeding with failing tests = WORKFLOW VIOLATION
+- Completing task without test verification = WORKFLOW VIOLATION
+
+**Workflow Enforcement:**
+The workflow now explicitly includes TDD requirements in steps 12, 18, 19, and 20 to prevent workflow deviations.
+
 ## Pre-Planning Phase
 
 ### 1. USER_PROMPT
@@ -121,15 +153,34 @@ Present implementation plan for user approval with evaluation results. Use ask_u
 
 ## Implementation Phase
 
-### 12. IMPLEMENT
-Execute implementation based on approved plan with version control. All changes must be tracked. 
+### 12. CREATE_TEST_PLAN (CRITICAL - TDD Compliance)
+**MANDATORY**: Create comprehensive test plan BEFORE implementation following SOFTWARE_ENGINEERING_PRINCIPLES.md Test Principles:
+- Write failing tests first (Red-Green-Refactor TDD approach)
+- Plan unit tests for each component in isolation
+- Plan integration tests for end-to-end functionality
+- Plan security tests for input validation, secret redaction, configuration tampering
+- Plan performance tests for latency targets
+- Test strategy must be documented and approved before implementation
+
+**TDD Requirement**: SOFTWARE_ENGINEERING_PRINCIPLES.md explicitly states:
+- "Follow TDD approach: write failing test, implement code, refactor"
+- "Write tests before writing functional code"
+- "Test list approach: plan tests first, then implement one at a time"
+- AGENTS.md Critical Rule: "Testing-First: Never implement without a test plan. Test in order: implement → test → verify → fix"
+
+**Exit Condition**: Test plan created and approved by user. Implementation CANNOT proceed without test plan approval.
+
+### 13. IMPLEMENT
+Execute implementation based on approved plan with version control. All changes must be tracked.
 For implementations requiring refactoring of existing code:
 - Update dependency imports and cross-file references
 - Maintain backward compatibility during migration
 - Document refactoring changes in commit messages
 - Test refactored code paths before proceeding
 
-### 13. PARALLEL_VALIDATION (Background Subagents)
+**TDD Compliance**: Implementation must follow test plan created in step 12. Code should make tests pass (Green phase of TDD).
+
+### 14. PARALLEL_VALIDATION (Background Subagents)
 Spawn parallel validation subagents:
 - **Subagent A**: Code quality validation - Standards compliance, formatting, best practices, architectural consistency
 - **Subagent B**: Compliance validation - Governance rules, boundary adherence, security requirements, implementation-specific compliance
@@ -137,16 +188,16 @@ Spawn parallel validation subagents:
 
 **Parallel Execution**: All validation subagents run simultaneously, each focused on specific validation domain.
 
-### 14. SYNTHESIZE_VALIDATION
+### 15. SYNTHESIZE_VALIDATION
 Parent agent synthesizes validation results:
 - Combine findings from all validation subagents
 - Identify critical issues vs. warnings
 - Create unified validation report
 
-### 15. SUMMARIZE_IMPLEMENTATION
+### 16. SUMMARIZE_IMPLEMENTATION
 Present implementation changes and validation synthesis for user verification. Use ask_user_question tool for structured review and approval process. User must review and approve changes.
 
-### 16. EVALUATION_GATE (Iteration Loop)
+### 17. EVALUATION_GATE (Iteration Loop)
 Automated quality checks on implementation (aligned with ARCHITECTURE.md and IMPLEMENTATION.md):
 - **Code quality**: Does code meet standards? (SOFTWARE_ENGINEERING_PRINCIPLES.md)
 - **Compliance**: Are governance rules followed? (ARCHITECTURE.md Principle 4)
@@ -162,60 +213,92 @@ Automated quality checks on implementation (aligned with ARCHITECTURE.md and IMP
 - **Zero Dependencies**: Does core maintain zero external dependencies? (IMPLEMENTATION.md - JSON instead of pyyaml)
 - **Performance**: Does implementation avoid anti-patterns like synchronous file I/O? (IMPLEMENTATION.md - policy caching)
 
-**Iteration Loop**: If evaluation gate fails, loop back to step 12 (IMPLEMENT) with specific feedback. Maximum 3 iterations.
+**Iteration Loop**: If evaluation gate fails, loop back to step 13 (IMPLEMENT) with specific feedback. Maximum 3 iterations.
 
 ## Testing Phase
 
-### 17. PARALLEL_TESTING (Background Subagents)
-Spawn parallel testing subagents:
+### 18. RUN_TESTS (CRITICAL - TDD Compliance)
+**MANDATORY**: Run all tests created in step 12. All tests MUST pass before implementation is considered complete.
+
+**Test Execution Requirements**:
+- Run unit tests: `python -m unittest discover -s Overseer/Tests -p "test_*.py" -v`
+- Run integration tests: Execute integration test suite
+- Run security tests: Execute security test suite
+- Run performance tests: Execute performance test suite
+- Verify test coverage: All critical paths must be covered
+
+**TDD Requirement**: SOFTWARE_ENGINEERING_PRINCIPLES.md explicitly states:
+- "Build comprehensive automated test suites"
+- "Single command execution of all tests"
+- "Confidence that passing tests means code is working"
+- AGENTS.md Critical Rule: "Test in order: implement → test → verify → fix"
+
+**Exit Condition**: ALL tests pass. Implementation CANNOT proceed to completion if any test fails.
+
+### 19. FIX_TEST_FAILURES (Iteration Loop)
+If any tests fail:
+- Analyze test failure root cause
+- Fix implementation to make tests pass
+- Re-run tests to verify fix
+- Maximum 3 iterations per test failure to prevent runaway loops
+
+**Iteration Loop**: If tests fail after 3 iterations, escalate to user for guidance.
+
+### 20. VERIFY_COMPLIANCE
+Verify implementation compliance with all architectural principles and project requirements:
+- Cross-reference implementation against ARCHITECTURE.md principles
+- Verify compliance with IMPLEMENTATION.md patterns
+- Verify compliance with SOFTWARE_ENGINEERING_PRINCIPLES.md
+- Verify compliance with ORGANIZATIONAL_GUIDE.md (if applicable)
+- Document compliance status
+
+**Exit Condition**: All compliance requirements verified and documented.
+
+### 21. PARALLEL_TESTING (Background Subagents - Optional Enhancement)
+For comprehensive validation, spawn parallel testing subagents:
 - **Subagent A**: Unit testing - Individual component testing, conformance testing (type validation, schema validation, interface validation)
 - **Subagent B**: Integration testing - Component interaction testing, dependency testing (import verification, compatibility testing)
 - **Subagent C**: Security testing - Vulnerability scanning, penetration testing, domain-specific security testing
 - **Subagent D**: Performance testing - Load testing, response time validation, regression testing for refactored code
 
-**Testing Best Practices for Protocol Layers:**
+**Note**: This step is optional enhancement. Step 18 (RUN_TESTS) is MANDATORY and must pass before completion.
+
+**Testing Best Practices:**
 - **Layered Testing Strategy**: Unit tests → Contract tests → Integration tests → End-to-end tests
-- **Schema Validation Testing**: Schema unit checks, protocol contract tests, handler unit tests
 - **Test Pyramid Pattern**: Many fast unit tests, some integration tests, few end-to-end tests
 - **Arrange-Act-Assert Structure**: Set up test data, call method under test, assert expected results
-- **Contract Testing**: Verify published schema matches handler behavior, catch registration/serialization drift
-- **Regression Testing**: Ensure refactoring preserves behavior, test import paths and compatibility
-- **Security Testing**: Validate allowlists, check dynamic imports, test input validation
-- **Performance Testing**: Verify no performance regression from refactoring, test critical paths
-
-**Protocol-Specific Test Coverage:**
-- Schema validation for all event types
-- Contract testing for protocol surface
-- Import path verification (module vs script execution)
-- Adapter translation testing (CLI-specific to universal events)
-- Backward compatibility testing
-- Extensibility testing (ExtensibleEvent schema)
-- Security validation (dynamic imports, allowlists)
-- Integration testing with hook system
+- **Security Testing**: Validate allowlists, check input validation, test secret redaction
+- **Performance Testing**: Verify latency targets (< 100ms for hooks, < 500ms for policy evaluation)
 
 **Parallel Execution**: All testing subagents run simultaneously, each focused on specific testing domain.
 
-### 18. SYNTHESIZE_TEST_RESULTS
-Parent agent synthesizes test results:
+### 22. SYNTHESIZE_TEST_RESULTS (Optional Enhancement)
+Parent agent synthesizes test results from parallel testing subagents:
 - Combine results from all testing subagents
 - Identify critical failures vs. warnings
 - Create unified test report with coverage metrics
 
-### 19. SUMMARIZE_TEST_RESULTS
+**Note**: This step is optional. Step 18 (RUN_TESTS) provides baseline testing coverage.
+
+### 23. SUMMARIZE_TEST_RESULTS (Optional Enhancement)
 Present synthesized test outcomes for user verification. Use ask_user_question tool for structured review process. User must review test results.
 
-### 20. EVALUATION_GATE (Iteration Loop)
-Automated quality checks on tests:
+**Note**: This step is optional. Step 18 (RUN_TESTS) provides baseline test reporting.
+
+### 24. EVALUATION_GATE (Iteration Loop - Optional Enhancement)
+Automated quality checks on tests from parallel testing:
 - **Coverage**: Do tests cover critical paths?
 - **Thresholds**: Do tests meet quality thresholds?
 - **Regression**: Do tests prevent regressions?
 - **Test synthesis**: Are all test results acceptable?
 
-**Iteration Loop**: If evaluation gate fails, loop back to step 17 (PARALLEL_TESTING) with specific feedback. Maximum 3 iterations.
+**Iteration Loop**: If evaluation gate fails, loop back to step 21 (PARALLEL_TESTING) with specific feedback. Maximum 3 iterations.
+
+**Note**: This step is optional. Step 18 (RUN_TESTS) provides mandatory test execution.
 
 ## Review Phase
 
-### 21. COMPREHENSIVE_REVIEW (Managed Devins)
+### 25. COMPREHENSIVE_REVIEW (Managed Devins - Optional)
 For complex tasks, spawn managed Devins for specialized review:
 - **Managed Devin A**: Architecture review - Design patterns, modularity, scalability, layer placement, dependency direction, separation of concerns
 - **Managed Devin B**: Security review - Security posture, vulnerability assessment, domain-specific security considerations
@@ -223,16 +306,22 @@ For complex tasks, spawn managed Devins for specialized review:
 
 **Parallel Execution**: Managed Devins work in parallel, coordinator agent synthesizes results.
 
-### 22. SYNTHESIZE_REVIEW
+**Note**: This step is optional for standard implementations.
+
+### 26. SYNTHESIZE_REVIEW (Optional)
 Parent/coordinator agent synthesizes review findings:
 - Combine results from all review agents
 - Identify critical issues vs. recommendations
 - Create unified review report
 
-### 23. SUMMARIZE_REVIEW
+**Note**: This step is optional for standard implementations.
+
+### 27. SUMMARIZE_REVIEW (Optional)
 Present synthesized review findings for final user approval. Use ask_user_question tool for structured final approval process. User must approve final work.
 
-### 24. PROOF_BUNDLE_GENERATION
+**Note**: This step is optional for standard implementations.
+
+### 28. PROOF_BUNDLE_GENERATION (Optional)
 Create immutable proof bundle containing:
 - **Complete pipeline snapshot**: Versioned configuration, dependency graph
 - **All evaluation results**: Every metric score from evaluation gates with iteration history
@@ -243,9 +332,11 @@ Create immutable proof bundle containing:
 
 Proof bundle enables regulatory compliance and audit reconstruction with full provenance.
 
+**Note**: This step is optional for standard implementations.
+
 ## Completion Phase
 
-### 25. AUDIT_TRAIL_UPDATE
+### 29. AUDIT_TRAIL_UPDATE
 Update immutable audit trail with full workflow record:
 - All workflow steps with timestamps
 - Subagent execution details and results
@@ -253,8 +344,14 @@ Update immutable audit trail with full workflow record:
 - User approvals with evidence reviewed
 - Proof bundle hash and verification links
 
-### 26. COMPLETE
-Task completion after user approval and proof bundle verification. Only then is the task considered complete.
+### 30. COMPLETE
+Task completion after user approval and test verification. Only then is the task considered complete.
+
+**Completion Requirements**:
+- All tests pass (Step 18 - MANDATORY)
+- Implementation verified (Step 20 - MANDATORY)
+- Code committed to version control
+- Documentation updated if needed
 
 ## Strict Governance Principles
 
