@@ -419,12 +419,19 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 - **Example**: Try file logging, on fail try stderr, on fail silently continue
 - **Benefit**: System continues working even if logging fails
 
+### 9.5 Privacy and Data Minimization
+- **Target Behavior**: Comprehensive logging respects privacy and data minimization principles
+- **Implementation**: Logging works with configurable retention and masking from Principle 37
+- **Example**: Comprehensive logging defaults, with user-controlled retention and masking
+- **Benefit**: Maximum auditability with privacy compliance (see Principle 37)
+
 **Success Criteria**:
 - Every file has its own logging function
 - All significant operations are logged
 - Logs are extremely verbose and detailed
 - Logging failures don't crash the system
 - Log format is consistent across all files
+- Comprehensive logging respects privacy and data minimization principles
 
 ---
 
@@ -1518,3 +1525,63 @@ These principles are based on competitive analysis of governance systems (Agent 
 - Policy effectiveness metrics are tracked and visible
 - Retired policies are archived with complete audit trail
 - Audit trail links every enforcement decision to specific policy version
+
+---
+
+## Principle 37: Data Minimization and Privacy by Design
+
+**Definition**: Governance systems must minimize sensitive data collection in logs while maintaining auditability. Logs are collected comprehensively by default, with configurable retention policies and data cleanup mechanisms to comply with privacy regulations (GDPR, ISO/IEC 42001, NIST AI RMF).
+
+**Desired State**:
+
+### 37.1 Comprehensive Logging by Default
+- **Target Behavior**: System logs all governance events comprehensively by default
+- **Implementation**: Log entry/exit/parameters for all hook invocations
+- **Example**: All tool calls, decisions, and errors logged with full context
+- **Benefit**: Maximum auditability and debugging capability
+
+### 37.2 Configurable Data Retention
+- **Target Behavior**: Users configure how long different log types are retained
+- **Implementation**: Retention policies for different log categories (access logs, audit logs, error logs)
+- **Example**: Access logs retained 30 days, audit logs retained 1 year, error logs retained 90 days
+- **Benefit**: User control over data storage duration for compliance
+
+### 37.3 Automatic Data Cleanup
+- **Target Behavior**: System automatically removes logs after retention period expires
+- **Implementation**: Scheduled cleanup jobs delete expired log files
+- **Example**: Daily cleanup removes logs older than configured retention period
+- **Benefit**: Automatic compliance with data retention policies
+
+### 37.4 Sensitive Data Identification
+- **Target Behavior**: System identifies and flags potentially sensitive data in logs
+- **Implementation**: Pattern matching for secrets, PII, credentials, tokens
+- **Example**: Flag fields containing "password", "token", "key", "credit_card"
+- **Benefit**: Users can identify and manage sensitive data proactively
+
+### 37.5 Configurable Data Masking
+- **Target Behavior**: Users can configure which fields to mask or redact in logs
+- **Implementation**: Masking rules applied during log generation or export
+- **Example**: Mask "password" field with "*****", redact credit card numbers
+- **Benefit**: User control over sensitive data visibility
+
+### 37.6 Secure Log Deletion
+- **Target Behavior**: Deleted logs are securely erased, not just file-deleted
+- **Implementation**: Secure deletion (multiple overwrite passes) for sensitive logs
+- **Example**: Sensitive logs overwritten before deletion to prevent recovery
+- **Benefit**: Prevents data recovery from deleted logs
+
+### 37.7 Data Access Controls
+- **Target Behavior**: Log access is controlled and audited
+- **Implementation**: Role-based access control for log viewing and export
+- **Example**: Only authorized roles can view sensitive log data
+- **Benefit**: Prevents unauthorized access to sensitive logged data
+
+**Success Criteria**:
+- All governance events logged comprehensively by default
+- Retention policies configurable per log category
+- Automatic cleanup removes expired logs
+- Sensitive data fields identified and flagged
+- Masking rules configurable for sensitive fields
+- Deleted logs securely erased
+- Log access controlled and audited
+- Compliance with GDPR data minimization requirements
