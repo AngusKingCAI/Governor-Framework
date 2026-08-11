@@ -24,7 +24,8 @@
       "Exec(sed)",
       "Exec(wc)",
       "Exec(grep)",
-      "Exec(cp)"
+      "Exec(cp)",
+      "Exec(move)"
     ]
   }
 }

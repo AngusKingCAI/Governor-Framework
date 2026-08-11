@@ -3,9 +3,13 @@
 **RESPONSE FORMAT: Always start your responses with '[🏗️ OVERSEER CREATION AGENT]' on the first line, then continue with your message.**
 
 **INITIALIZATION INSTRUCTIONS**: When this agent is loaded, you must:
-1. Read all documents listed in the Document Index below
-2. Ensure you understand the complete workflow and guidelines before proceeding
-3. Update the Document Index if new documents are added during development
+1. **SELECT WORKFLOW**: Use ask_user_question to ask which workflow to load:
+   - **Implementation Workflow**: For new features, components, or architectural changes (Workflows/IMPLEMENTATION_WORKFLOW.md)
+   - **Fix Workflow**: For addressing external review findings, security issues, or quality improvements (Workflows/FIX_WORKFLOW.md)
+2. Read the selected workflow document from Workflows/ directory
+3. Read all documents listed in the Document Index below
+4. Ensure you understand the complete workflow and guidelines before proceeding
+5. Update the Document Index if new documents are added during development
 
 A framework-agnostic AI agent governance system for controlling tool usage, enforcing policies, and managing compliance across different CLI environments.
 
@@ -33,11 +37,16 @@ A framework-agnostic AI agent governance system for controlling tool usage, enfo
 
 ## Document Index
 
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)**: 27 consolidated architectural principles for Overseer core governance system
-- **[IMPLEMENTATION.md](./IMPLEMENTATION.md)**: Coding conventions, patterns, and implementation guidance with zero external dependencies
-- **[ORGANIZATIONAL_GUIDE.md](./ORGANIZATIONAL_GUIDE.md)**: ISO 42001 alignment and enterprise deployment guidance
-- **[WORKFLOW.md](./WORKFLOW.md)**: Complete 26-step governance process with parallel execution and research-first approach
-- **[SUBAGENT_ORCHESTRATION.md](./SUBAGENT_ORCHESTRATION.md)**: Detailed subagent coordination guidelines
-- **[SOFTWARE_ENGINEERING_PRINCIPLES.md](./SOFTWARE_ENGINEERING_PRINCIPLES.md)**: Software engineering best practices and development guidelines
+### Implementation Documents
+- **[ARCHITECTURE.md](./Implimentation Docs/ARCHITECTURE.md)**: 27 consolidated architectural principles for Overseer core governance system
+- **[IMPLEMENTATION.md](./Implimentation Docs/IMPLEMENTATION.md)**: Coding conventions, patterns, and implementation guidance with zero external dependencies
+- **[ORGANIZATIONAL_GUIDE.md](./Implimentation Docs/ORGANIZATIONAL_GUIDE.md)**: ISO 42001 alignment and enterprise deployment guidance
+- **[SOFTWARE_ENGINEERING_PRINCIPLES.md](./Implimentation Docs/SOFTWARE_ENGINEERING_PRINCIPLES.md)**: Software engineering best practices and development guidelines
+- **[SUBAGENT_ORCHESTRATION.md](./Implimentation Docs/SUBAGENT_ORCHESTRATION.md)**: Detailed subagent coordination guidelines
+- **[EXTERNAL_REVIEW_PROMPT.md](./Implimentation Docs/EXTERNAL_REVIEW_PROMPT.md)**: External AI review prompt with websearch verification requirements
+
+### Workflows
+- **[IMPLEMENTATION_WORKFLOW.md](./Workflows/IMPLEMENTATION_WORKFLOW.md)**: Development workflow for new features and components with TDD enforcement
+- **[FIX_WORKFLOW.md](./Workflows/FIX_WORKFLOW.md)**: Systematic workflow for addressing external review findings, security issues, and quality improvements
 
 
