@@ -1458,3 +1458,63 @@ These principles are based on competitive analysis of governance systems (Agent 
 - Model extensible for new requirements
 - Consistent interface across CLIs
 - Framework works with any CLI that can map to canonical model
+
+---
+
+## Principle 36: Policy Lifecycle and Change Control
+
+**Definition**: Governance policies must follow a structured lifecycle from creation to retirement, with version control, approval workflows, and audit trails. This ensures reproducibility, accountability, and compliance with enterprise governance standards.
+
+**Desired State**:
+
+### 36.1 Policy Versioning
+- **Target Behavior**: Every policy has a unique version identifier
+- **Implementation**: Semantic versioning (e.g., 1.0.0, 1.1.0) with timestamp and author
+- **Example**: Policy change creates new version: "file-deletion-rule v2.1.0 by user@example.com"
+- **Benefit**: Reproducible governance decisions linked to specific policy versions
+
+### 36.2 Draft and Review Workflow
+- **Target Behavior**: Policy changes go through structured review before activation
+- **Implementation**: Draft policies can be tested and reviewed without affecting enforcement
+- **Example**: Draft policy in "staging" mode for review before production
+- **Benefit**: Prevents accidental policy errors from affecting production
+
+### 36.3 Approval and Authorization
+- **Target Behavior**: Policy changes require explicit approval before activation
+- **Implementation**: Approval workflow with authorized reviewers and audit trail
+- **Example**: Policy requires approval from governance board before activation
+- **Benefit**: Accountability for policy changes
+
+### 36.4 Deployment and Activation
+- **Target Behavior**: Policy deployment is controlled and auditable
+- **Implementation**: Policy activation is timestamped and linked to approver
+- **Example**: Policy activated with timestamp "2026-08-11 14:30:00" and approver ID
+- **Benefit**: Clear audit trail of when policies became effective
+
+### 36.5 Rollback and Recovery
+- **Target Behavior**: Previous policy versions can be restored if needed
+- **Implementation**: Ability to rollback to any previous policy version
+- **Example**: Rollback to "file-deletion-rule v1.0.0" if v2.0.0 causes issues
+- **Benefit**: Quick recovery from problematic policy changes
+
+### 36.6 Monitoring and Effectiveness
+- **Target Behavior**: Policy effectiveness is tracked with metrics
+- **Implementation**: Track policy matches, denials, overrides, and false positives
+- **Example**: Dashboard shows "file-deletion-rule blocked 15 actions, 2 overrides this week"
+- **Benefit**: Data-driven policy optimization
+
+### 36.7 Retirement and Archival
+- **Target Behavior**: Retired policies are archived with immutable records
+- **Implementation**: Retired policies moved to archive with full audit trail
+- **Example**: Retired policy accessible in archive with all historical data
+- **Benefit**: Complete governance history for audits and compliance
+
+**Success Criteria**:
+- Every policy has unique version identifier with timestamp and author
+- Draft policies can be tested without affecting production
+- Policy changes require explicit approval before activation
+- Policy activation is timestamped and auditable
+- Previous policy versions can be restored if needed
+- Policy effectiveness metrics are tracked and visible
+- Retired policies are archived with complete audit trail
+- Audit trail links every enforcement decision to specific policy version
