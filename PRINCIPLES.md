@@ -776,25 +776,25 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 **Desired State**:
 
-### 13.1 Kernel Minimality
+### 17.1 Kernel Minimality
 - **Target Behavior**: Core governance kernel is as small as possible
 - **Implementation**: Only essential governance logic in kernel, everything else in adapters
 - **Example**: Kernel only contains event routing and policy enforcement, not domain-specific logic
 - **Benefit**: Easy to embed, understand, and maintain
 
-### 13.2 Embeddability
+### 17.2 Embeddability
 - **Target Behavior**: Kernel can be embedded in any environment
 - **Implementation**: Zero runtime dependencies, stdlib-only when possible
 - **Example**: Kernel can be embedded in CLI, web service, or any application
 - **Benefit**: Universal applicability across deployment scenarios
 
-### 13.3 Domain Neutrality
+### 17.3 Domain Neutrality
 - **Target Behavior**: Kernel contains no domain-specific logic
 - **Implementation**: All domain-specific logic lives in adapters
 - **Example**: Kernel doesn't know about "Devin" or "Claude", only about "events" and "policies"
 - **Benefit**: Same kernel can govern different domains
 
-### 13.4 Portable Governance
+### 17.4 Portable Governance
 - **Target Behavior**: Governance decisions are portable and verifiable
 - **Implementation**: Decisions are self-contained and can be verified independently
 - **Example**: Governance decisions can be audited without access to the original system
@@ -815,25 +815,25 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 **Desired State**:
 
-### 14.1 Sub-Millisecond Hook Execution
+### 18.1 Sub-Millisecond Hook Execution
 - **Target Behavior**: Hook execution completes in sub-millisecond time
 - **Implementation**: Optimize hot paths, minimize allocations, use efficient data structures
 - **Example**: Hook completes in <0.1ms for allow path, <0.5ms for deny path
 - **Benefit**: Governance overhead is negligible compared to tool execution time
 
-### 14.2 Linear Scaling
+### 18.2 Linear Scaling
 - **Target Behavior**: Performance scales linearly with load
 - **Implementation**: No O(n²) or worse algorithms in hot paths
 - **Example**: 1000 concurrent agents maintain consistent per-hook latency
 - **Benefit**: Predictable performance under load
 
-### 14.3 Zero Allocations in Hot Paths
+### 18.3 Zero Allocations in Hot Paths
 - **Target Behavior**: Hot paths avoid memory allocations
 - **Implementation**: Reuse objects, use efficient data structures, avoid boxing
 - **Example**: Pre-allocate log buffers, reuse event objects
 - **Benefit**: Reduced GC pressure, consistent latency
 
-### 14.4 Efficient Resource Usage
+### 18.4 Efficient Resource Usage
 - **Target Behavior**: Minimal CPU and memory footprint
 - **Implementation**: Lazy loading, efficient algorithms, resource pooling
 - **Example**: Governance adds <1% CPU overhead for typical workloads
@@ -972,25 +972,25 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 **Desired State**:
 
-### 18.1 Hash Chain Verification
+### 22.1 Hash Chain Verification
 - **Target Behavior**: Audit logs use hash chain for tamper detection
 - **Implementation**: Each log entry includes hash of previous entry
 - **Example**: Merkle tree or hash chain for log integrity
 - **Benefit**: Any modification to logs is detectable
 
-### 18.2 Cryptographic Signatures
+### 22.2 Cryptographic Signatures
 - **Target Behavior**: Critical decisions are cryptographically signed
 - **Implementation**: Governance decisions include cryptographic signatures
 - **Example**: Denial decisions signed with private key, verifiable with public key
 - **Benefit**: Decision authenticity and non-repudiation
 
-### 18.3 Immutable Audit Trail
+### 22.3 Immutable Audit Trail
 - **Target Behavior**: Audit trail is append-only
 - **Implementation**: Once written, audit entries cannot be modified
 - **Example**: Log files are append-only, deletion prohibited
 - **Benefit**: Immutable evidence for compliance
 
-### 18.4 Offline Verification
+### 22.4 Offline Verification
 - **Target Behavior**: Audit can be verified without system access
 - **Implementation**: Audit verification works with only log files and public keys
 - **Example**: External auditor can verify logs without accessing running system
@@ -1011,25 +1011,25 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 **Desired State**:
 
-### 19.1 Provider Portability
+### 23.1 Provider Portability
 - **Target Behavior**: System works across different providers/platforms
 - **Implementation**: No provider-specific dependencies or lock-in
 - **Example**: Works on AWS, Azure, GCP, or on-premise equally
 - **Benefit**: No vendor lock-in, deployment flexibility
 
-### 19.2 Behavioral Inspectability
+### 23.2 Behavioral Inspectability
 - **Target Behavior**: System behavior is fully inspectable
 - **Implementation**: Open source, clear code, comprehensive logging
 - **Example**: All decisions can be audited and explained
 - **Benefit**: Trust through transparency
 
-### 19.3 No Hidden Dependencies
+### 23.3 No Hidden Dependencies
 - **Target Behavior**: No hidden dependencies on single vendor/platform
 - **Implementation**: All dependencies are explicit and documented
 - **Example**: No proprietary services or cloud-specific features
 - **Benefit**: Full control over deployment and operation
 
-### 19.4 Data Sovereignty
+### 23.4 Data Sovereignty
 - **Target Behavior**: User controls where data is stored and processed
 - **Implementation**: All data processing happens in user-controlled environment
 - **Example**: Logs, policies, and audit data stay in user's infrastructure
