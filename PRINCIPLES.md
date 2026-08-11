@@ -847,25 +847,25 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 **Desired State**:
 
-### 15.1 Graceful Degradation
+### 19.1 Graceful Degradation
 - **Target Behavior**: Hook failures don't crash the governed system
-- **Implementation**: Hooks use silent failure pattern, fallback to safe defaults
-- **Example**: If hook fails, default to "allow" or configured safe behavior
-- **Benefit**: System continues working even if governance fails
+- **Implementation**: Hooks use failure-safe pattern, fallback to deny on errors
+- **Example**: If hook fails, default to "deny" with error logging
+- **Benefit**: System remains secure even if governance fails
 
-### 15.2 Hook Isolation
+### 19.2 Hook Isolation
 - **Target Behavior**: Hook failures don't affect other hooks
 - **Implementation**: Each hook is isolated with its own error handling
 - **Example**: One adapter's hook failure doesn't prevent other adapters from working
 - **Benefit**: Partial failure doesn't cause system-wide failure
 
-### 15.3 Deterministic Hook Behavior
+### 19.3 Deterministic Hook Behavior
 - **Target Behavior**: Same inputs always produce same outputs
 - **Implementation**: No randomness, no state-dependent behavior in hot paths
 - **Example**: Same event always produces same governance decision
 - **Benefit**: Reproducible behavior, easier debugging and testing
 
-### 15.4 Circuit Breaker Pattern
+### 19.4 Circuit Breaker Pattern
 - **Target Behavior**: Failing hooks are temporarily disabled
 - **Implementation**: Circuit breaker disables hooks after repeated failures
 - **Example**: If a hook fails 3 times in a row, disable it for 1 minute
@@ -880,41 +880,42 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 20: Light by Default, Advisory by Default
+## Principle 20: Fail-Closed by Default, Configurable Strictness
 
-**Definition**: Governance should be light and advisory by default, with the ability to be strict when needed. This balances usability for hobbyists with control for enterprises.
+**Definition**: Governance should be fail-closed by default for security, with configurable strictness levels to balance usability for hobbyists with control for enterprises.
 
 **Desired State**:
 
-### 16.1 Advisory Mode Default
-- **Target Behavior**: Default governance mode is advisory (log only, don't block)
-- **Implementation**: Hooks log decisions but don't block by default
-- **Example**: New installations start in "log-only" mode
-- **Benefit**: Low barrier to entry for hobbyists
+### 20.1 Fail-Closed Default
+- **Target Behavior**: Default governance mode is fail-closed (block on failure)
+- **Implementation**: Hooks block actions when governance checks fail
+- **Example**: New installations start in "blocking" mode with deny on errors
+- **Benefit**: Security-first approach prevents unauthorized access during failures
 
-### 16.2 Configurable Strictness
+### 20.2 Configurable Strictness
 - **Target Behavior**: Strictness levels are configurable
-- **Implementation**: Support log-only, advisory, blocking modes
-- **Example**: Hobbyists use log-only, enterprises use blocking mode
+- **Implementation**: Support blocking, advisory, and hybrid modes
+- **Example**: Hobbyists use advisory mode, enterprises use blocking mode
 - **Benefit**: Scales from casual to critical use cases
 
-### 16.3 Progressive Enforcement
+### 20.3 Progressive Enforcement
 - **Target Behavior**: Users can progressively increase strictness
-- **Implementation**: Start permissive, allow gradual tightening of policies
+- **Implementation**: Start with advisory, allow gradual tightening to blocking
 - **Example**: Start with logging, move to warnings, then to blocking
 - **Benefit**: Users can adapt governance to their needs gradually
 
-### 16.4 Local Override Capability
+### 20.4 Local Override Capability
 - **Target Behavior**: Users can override governance locally when needed
 - **Implementation**: Provide local escape hatch for emergencies
 - **Example**: Local file can temporarily disable specific rules
 - **Benefit**: Flexibility for urgent situations without breaking governance
 
 **Success Criteria**:
-- Default mode is advisory (log-only)
+- Default mode is fail-closed (block on failure)
 - Multiple strictness levels supported
 - Progressive enforcement path available
-- Local override capability exists
+- Local override capability for emergencies
+- System degrades gracefully without breaking security
 - No breaking changes when moving between modes
 
 ---
@@ -1072,3 +1073,349 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 - Hook order is configurable
 - Easy to compose hooks from primitives
 - Complex governance pipelines can be built
+
+---
+
+## Market-Derived Principles
+
+These principles are based on competitive analysis of governance systems (Agent Control Standard, SkillGuard, ThumbGate, SteerPlane, Microsoft Agent Governance Toolkit) and regulatory frameworks (NIST COSAiS, CAISI, Singapore's IMDA Model AI Governance Framework).
+
+## Principle 25: Determinism Over Probability
+
+**Definition**: Governance layer produces binary allow/deny/modify verdicts based on state and rule matching, not learned confidence scores. The system uses declarative policy engines that evaluate structured authorization requests against explicit rules.
+
+**Desired State**:
+
+### 25.1 Binary Governance Decisions
+- **Target Behavior**: Governance produces binary outcomes (allow/deny/modify)
+- **Implementation**: Rule evaluation returns clear deterministic results
+- **Example**: "Block file deletion" returns deny, not "95% confidence to block"
+- **Benefit**: Verifiable, predictable governance decisions
+
+### 25.2 State-Based Rule Matching
+- **Target Behavior**: Rules match against explicit state, not probabilistic analysis
+- **Implementation**: Rules evaluate current state against defined conditions
+- **Example**: Rule checks "if file in protected directory" not "if file looks important"
+- **Benefit**: Deterministic, auditable rule evaluation
+
+### 25.3 Declarative Policy Engine
+- **Target Behavior**: Policy defined declaratively, not procedurally
+- **Implementation**: YAML/DSL defines what should happen, not how
+- **Example**: "Block sensitive file access" rather than "Check file, if sensitive, block"
+- **Benefit**: Policy intent clear, implementation details abstracted
+
+**Success Criteria**:
+- Governance decisions are binary and deterministic
+- Rules match against explicit state conditions
+- Policy is defined declaratively
+- No confidence scores or probabilistic judgments
+- Outcomes are verifiable and reproducible
+
+---
+
+## Principle 26: In-Path Enforcement (Fail-Closed)
+
+**Definition**: Governance controls must be in-path (checked before the action executes), not forensic-only (reconstructed after failure). This aligns with fail-closed philosophy.
+
+**Desired State**:
+
+### 26.1 Pre-Execution Validation
+- **Target Behavior**: Governance checks happen before action execution
+- **Implementation**: Hooks intercept actions before they execute
+- **Example**: PreToolUse hook validates before tool executes
+- **Benefit**: Prevents damage rather than detecting after fact
+
+### 26.2 Fail-Closed Default
+- **Target Behavior**: System fails closed by default, blocks unknown actions
+- **Implementation**: If governance check fails, action is blocked
+- **Example**: If rule evaluation fails, tool use is denied
+- **Benefit**: Security-first approach, prevents unauthorized actions
+
+### 26.3 Immediate Enforcement
+- **Target Behavior**: Governance decisions are enforced immediately
+- **Implementation**: No delay between decision and enforcement
+- **Example**: Block decision immediately stops tool execution
+- **Benefit**: Prevents race conditions and timing attacks
+
+**Success Criteria**:
+- Governance checks happen before action execution
+- System fails closed by default
+- Enforcement is immediate
+- No forensic-only governance
+- Actions blocked before damage occurs
+
+---
+
+## Principle 27: Declarative Policy Over Hardcoded Rules
+
+**Definition**: Declarative policy languages provide the governance layer that hooks need to be operationally viable at scale. Policy language matters more than implementation—allow for Cedar, OPA, or similar engines plugging in.
+
+**Desired State**:
+
+### 27.1 Declarative Policy Language
+- **Target Behavior**: Policies defined in declarative language
+- **Implementation**: Support multiple policy engines (Cedar, OPA, custom)
+- **Example**: YAML rules can be processed by different policy engines
+- **Benefit**: Policy portability across implementations
+
+### 27.2 Policy Engine Pluggability
+- **Target Behavior**: Different policy engines can be plugged in
+- **Implementation**: Abstract policy evaluation interface
+- **Example**: Switch between Cedar and OPA without changing rules
+- **Benefit**: Flexibility in policy implementation choice
+
+### 27.3 Scale-Ready Policy Format
+- **Target Behavior**: Policy format suitable for enterprise scale
+- **Implementation**: Hierarchical, composable policy structure
+- **Example**: Policies can be organized, inherited, and composed
+- **Benefit**: Manages hundreds of agents and rules effectively
+
+**Success Criteria**:
+- Policies defined declaratively
+- Multiple policy engines supported
+- Policy evaluation abstracted
+- Format suitable for enterprise scale
+- Policy logic independent of implementation
+
+---
+
+## Principle 28: Runtime Observability Through Hooks
+
+**Definition**: The same interception points used for permission checks can support runtime behavioral monitoring, cost tracking, compliance auditing, and performance profiling.
+
+**Desired State**:
+
+### 28.1 Behavioral Monitoring
+- **Target Behavior**: Hooks monitor anomalous action sequences
+- **Implementation**: Logging and analysis of action patterns
+- **Example**: Detect repeated failed access attempts
+- **Benefit**: Runtime security monitoring
+
+### 28.2 Cost Tracking
+- **Target Behavior**: Hooks track token and time consumption per skill
+- **Implementation**: Metrics collection through hook interception
+- **Example**: Log token usage per tool call
+- **Benefit**: Cost optimization and budgeting
+
+### 28.3 Compliance Auditing
+- **Target Behavior**: Hooks record data access and policy application
+- **Implementation**: Comprehensive audit trail through hooks
+- **Example**: Log which files accessed under which policy
+- **Benefit**: Compliance reporting and verification
+
+### 28.4 Performance Profiling
+- **Target Behavior**: Hooks measure per-skill latency
+- **Implementation**: Performance metrics through hook timing
+- **Example**: Measure governance overhead per tool call
+- **Benefit**: Performance optimization and SLA monitoring
+
+**Success Criteria**:
+- Hooks support behavioral monitoring
+- Cost tracking available through hooks
+- Compliance auditing through hook logs
+- Performance profiling via hook metrics
+- Single interception point serves multiple observability needs
+
+---
+
+## Principle 29: Governance Before Deployment (Risk Bounding)
+
+**Definition**: Organizations must assess and bound new agent risks before deployment, increase human accountability for agent oversight, implement technical controls limiting agent authority, and enable end-users to understand and manage risks.
+
+**Desired State**:
+
+### 29.1 Pre-Deployment Risk Assessment
+- **Target Behavior**: Agent risks assessed before deployment
+- **Implementation**: Risk evaluation framework for new agents
+- **Example**: Agent capabilities analyzed for potential risks
+- **Benefit**: Proactive risk management
+
+### 29.2 Human Accountability
+- **Target Behavior**: Human oversight required for agent deployment
+- **Implementation**: Approval workflow for agent deployment
+- **Example**: Human reviews and approves agent configuration
+- **Benefit**: Clear accountability chain
+
+### 29.3 Technical Authority Limits
+- **Target Behavior**: Technical controls limit agent authority
+- **Implementation**: Capability restrictions and scope limitations
+- **Example**: Agent cannot access certain resources without approval
+- **Benefit**: Bounded agent authority
+
+### 29.4 User Risk Understanding
+- **Target Behavior**: End-users understand and can manage risks
+- **Implementation**: Clear risk communication and user controls
+- **Example**: Users see what risks agent poses and can configure limits
+- **Benefit**: Informed risk management
+
+**Success Criteria**:
+- Risk assessment before deployment
+- Human accountability in approval chain
+- Technical controls limit agent authority
+- Users understand and can manage risks
+- Proactive rather than reactive risk management
+
+---
+
+## Principle 30: Delegation Chain Accountability
+
+**Definition**: When an orchestrator agent delegates to a sub-agent which calls an API which modifies a database, the accountability chain spans multiple layers. The system needs explicit role propagation and delegation bounds.
+
+**Desired State**:
+
+### 30.1 Role Propagation
+- **Target Behavior**: User roles propagate through delegation chain
+- **Implementation**: Role information passed through all delegation levels
+- **Example**: Orchestrator → Sub-agent → API carries original user role
+- **Benefit**: Accountability maintained across delegation
+
+### 30.2 Delegation Bounds
+- **Target Behavior**: Delegation has explicit boundaries and limits
+- **Implementation**: Defined scope and duration for delegation
+- **Example**: Sub-agent can only access specific resources for limited time
+- **Benefit**: Controlled delegation prevents privilege escalation
+
+### 30.3 Chain of Custody
+- **Target Behavior**: Complete chain of custody tracked
+- **Implementation**: Audit trail records all delegation steps
+- **Example**: Every delegation step logged with context
+- **Benefit**: Complete accountability traceability
+
+**Success Criteria**:
+- Roles propagate through delegation chain
+- Delegation has explicit boundaries
+- Chain of custody tracked completely
+- Accountability maintained across all delegation levels
+- Clear audit trail of delegation flow
+
+---
+
+## Principle 31: No Silent Failures
+
+**Definition**: If a hook denies an action, the agent and operator must know immediately. Logging is not notification; fail-fast and surface denials in context.
+
+**Desired State**:
+
+### 31.1 Immediate Denial Notification
+- **Target Behavior**: Denials are immediately surfaced to user
+- **Implementation**: Clear error messages and context on denial
+- **Example**: "Access denied: File in protected directory" shown immediately
+- **Benefit**: User knows exactly what was blocked and why
+
+### 31.2 Contextual Error Messages
+- **Target Behavior**: Denials include relevant context
+- **Implementation**: Error messages include rule name, resource, reason
+- **Example**: "Denied by security rule: Cannot delete production files"
+- **Benefit**: User can understand and respond appropriately
+
+### 31.3 Fail-Fast Behavior
+- **Target Behavior**: System fails fast on governance violations
+- **Implementation**: No silent failures or background processing
+- **Example**: Tool use immediately blocked, not queued for later
+- **Benefit**: Clear, immediate feedback
+
+**Success Criteria**:
+- Denials immediately surfaced to user
+- Error messages include relevant context
+- System fails fast on violations
+- No silent failures
+- User understands what was blocked and why
+
+---
+
+## Principle 32: Minimal Context Passing
+
+**Definition**: Pass only what the enforcement rule needs. Don't pollute the hook with ambient state. This reduces cognitive load and attack surface.
+
+**Desired State**:
+
+### 32.1 Targeted Context Passing
+- **Target Behavior**: Only relevant context passed to hooks
+- **Implementation**: Hooks receive minimal necessary information
+- **Example**: File deletion hook only gets file path, not full system state
+- **Benefit**: Reduced cognitive load and attack surface
+
+### 32.2 Explicit Context Definition
+- **Target Behavior**: Context requirements explicitly defined
+- **Implementation**: Hook contracts specify required context
+- **Example**: Hook interface defines "requires: file_path, user_id"
+- **Benefit**: Clear context requirements, no over-passing
+
+### 32.3 State Isolation
+- **Target Behavior**: Hooks operate on isolated context
+- **Implementation**: No ambient state access, only provided context
+- **Example**: Hook cannot access global state beyond provided parameters
+- **Benefit**: Reduced attack surface, predictable behavior
+
+**Success Criteria**:
+- Hooks receive minimal necessary context
+- Context requirements explicitly defined
+- Hooks isolated from ambient state
+- No unnecessary state passing
+- Reduced cognitive load and attack surface
+
+---
+
+## Principle 33: Stateless Enforcement
+
+**Definition**: Each hook invocation should be independently decidable (given rule state and action context). Avoid cross-hook dependencies or temporal state that makes race conditions possible.
+
+**Desired State**:
+
+### 33.1 Independent Hook Decisions
+- **Target Behavior**: Each hook invocation independently decidable
+- **Implementation**: Hook decisions based only on current state and context
+- **Example**: Hook decision doesn't depend on previous hook results
+- **Benefit**: Predictable, testable behavior
+
+### 33.2 No Cross-Hook Dependencies
+- **Target Behavior**: Hooks don't depend on each other's state
+- **Implementation**: Each hook self-contained, no shared state
+- **Example**: Hook A doesn't require Hook B to have run first
+- **Benefit**: Flexible hook ordering, easier testing
+
+### 33.3 Race Condition Prevention
+- **Target Behavior**: Temporal state dependencies avoided
+- **Implementation**: No state that changes between hook invocations
+- **Example**: Hook decisions don't depend on timing or order
+- **Benefit**: Eliminates race conditions, improves reliability
+
+**Success Criteria**:
+- Hook decisions independently decidable
+- No cross-hook dependencies
+- No temporal state dependencies
+- Race conditions eliminated
+- Hooks self-contained and isolated
+
+---
+
+## Principle 34: Standardized Hook Payloads
+
+**Definition**: Even if the CLI changes, hook inputs/outputs should map cleanly to a canonical model (action type, agent identity, resource, access level, audit context).
+
+**Desired State**:
+
+### 34.1 Canonical Payload Model
+- **Target Behavior**: Hook payloads follow canonical model
+- **Implementation**: Standard structure for all hook inputs/outputs
+- **Example**: All hooks have action_type, agent_identity, resource, access_level
+- **Benefit**: Consistent interface across different CLIs
+
+### 34.2 CLI-to-Canonical Mapping
+- **Target Behavior**: CLI-specific formats mapped to canonical model
+- **Implementation**: Adapters convert CLI events to canonical payloads
+- **Example**: Devin CLI tool use mapped to canonical action model
+- **Benefit**: Framework works consistently across different CLIs
+
+### 34.3 Payload Extensibility
+- **Target Behavior**: Canonical model extensible for new fields
+- **Implementation**: Optional fields in canonical model
+- **Example**: Can add new audit context fields without breaking existing hooks
+- **Benefit**: Future-proof design
+
+**Success Criteria**:
+- Hook payloads follow canonical model
+- CLI-specific formats mapped to canonical
+- Model extensible for new requirements
+- Consistent interface across CLIs
+- Framework works with any CLI that can map to canonical model
