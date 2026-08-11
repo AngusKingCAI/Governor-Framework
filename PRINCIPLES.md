@@ -155,42 +155,42 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 3: Dynamic Event Registration
+## Principle 3: Config-Driven Adapter Selection
 
-**Definition**: Events are registered dynamically by adapters at runtime, not defined statically by the framework. The framework provides a registration mechanism that accepts any event type.
+**Definition**: A config file tells overseer which adapter to use. Events and hooks are based on the adapter selection in the config file. Rules are generic and cross-compatible, linked to different hooks based on adapter.
 
 **Desired State**:
 
-### 3.1 Runtime Event Registration
-- **Target Behavior**: Adapters register their events when they load
-- **Implementation**: Framework provides `register_event()` function that adapters call
-- **Example**: On initialization, an adapter calls `register_event("custom_event", schema)`
-- **Benefit**: Event types are defined by adapters, not framework
+### 3.1 Config-Based Adapter Selection
+- **Target Behavior**: Config file specifies which adapter to use
+- **Implementation**: overseer.py reads config to determine active adapter
+- **Example**: config.json specifies "adapter": "Devin-Adapter.py"
+- **Benefit**: Easy switching between different AI agent frameworks
 
-### 3.2 Schema Flexibility
-- **Target Behavior**: Adapters can define any schema structure they need
-- **Implementation**: Framework accepts schemas in any format (JSON Schema, TypedDict, custom)
-- **Example**: AdapterA might use JSON Schema, AdapterB might use TypedDict - framework accepts both
-- **Benefit**: Schema format flexibility for different adapter needs
+### 3.2 Adapter-Specific Hook Mapping
+- **Target Behavior**: Hooks are determined by the selected adapter
+- **Implementation**: Adapter defines which hooks it supports, overseer maps rules accordingly
+- **Example**: Devin-Adapter supports PreToolUse, PostToolUse; Cursor-Adapter supports different hooks
+- **Benefit**: Hook system adapts to adapter capabilities
 
-### 3.3 Event Discovery
-- **Target Behavior**: Framework discovers events by querying adapters
-- **Implementation**: Framework asks adapters "what events do you support?" and adapts
-- **Example**: Framework queries all loaded adapters and builds event routing table dynamically
-- **Benefit**: Self-discovering event system with no manual configuration
+### 3.3 Generic Cross-Compatible Rules
+- **Target Behavior**: Rules are generic and work across different adapters
+- **Implementation**: Rules define governance logic that can be applied to multiple hook types
+- **Example**: "Prevent file deletion" rule works for any adapter's file operations
+- **Benefit**: Write rules once, apply to any adapter
 
-### 3.4 Type Agnostic Processing
-- **Target Behavior**: Framework processes events generically
-- **Implementation**: Framework treats events as generic data structures with metadata
-- **Example**: Framework routes events based on metadata, not hardcoded field access
-- **Benefit**: Universal event processing regardless of structure
+### 3.4 Rule-to-Hook Linking
+- **Target Behavior**: Rules are linked to hooks based on adapter configuration
+- **Implementation**: Config maps rules to adapter-specific hooks
+- **Example**: Security rule linked to Devin-Adapter's PreToolUse hook
+- **Benefit**: Flexible rule application across different adapters
 
 **Success Criteria**:
-- Framework contains zero hardcoded event type definitions
-- Adapters can register any event type at runtime
-- Framework processes events without knowing their internal structure
-- Event routing is built dynamically from adapter capabilities
-- New event types can be added without framework modification
+- Config file specifies which adapter to use
+- overseer.py reads config to determine active adapter
+- Hooks are determined by selected adapter
+- Rules are generic and cross-compatible
+- Rules are linked to hooks based on adapter configuration
 
 ---
 
@@ -919,42 +919,42 @@ Meta actions enforce the meta rules for system compliance and self-governance.
 
 ---
 
-## Principle 21: Zero Dependency Portability
+## Principle 21: Managed Dependency Portability
 
-**Definition**: The governance system should have zero runtime dependencies when possible. This ensures maximum portability and reduces supply chain attack surface.
+**Definition**: The governance system should have minimal runtime dependencies. Dependencies that are required must be auto-installed via a script or bat file to ensure maximum portability and reduce supply chain attack surface.
 
 **Desired State**:
 
-### 17.1 Standard Library Only
-- **Target Behavior**: Core system uses only Python standard library
-- **Implementation**: No third-party dependencies in kernel
-- **Example**: Governance kernel works with pure Python stdlib
-- **Benefit**: Maximum portability, reduced attack surface
+### 21.1 Auto-Install Dependencies
+- **Target Behavior**: Required dependencies are auto-installed via script or bat file
+- **Implementation**: Installation script handles all dependency setup automatically
+- **Example**: install.bat or install.sh automatically installs required packages
+- **Benefit**: One-click setup, no manual dependency management
 
-### 17.2 Optional Dependencies
-- **Target Behavior**: Third-party dependencies are optional
-- **Implementation**: Core functionality works without extras, extras provide enhanced features
-- **Example**: Core works without external libs, optional libs add features like web dashboard
-- **Benefit**: Works in constrained environments, enhanced features available when needed
+### 21.2 Minimal Dependency Set
+- **Target Behavior**: Use minimal necessary dependencies
+- **Implementation**: Only dependencies that provide essential functionality are included
+- **Example**: Core governance uses stdlib, optional features have optional dependencies
+- **Benefit**: Reduced attack surface, faster installation
 
-### 17.3 Self-Contained Deployment
-- **Target Behavior**: System can be deployed without external dependencies
-- **Implementation**: Single-file deployment or minimal dependency set
-- **Example**: Governance can be deployed as a single Python file
-- **Benefit**: Easy deployment in restricted environments
+### 21.3 Dependency Transparency
+- **Target Behavior**: All dependencies are clearly documented and approved
+- **Implementation**: Dependencies listed in requirements.txt with version pinning
+- **Example**: Clear list of required packages with specific versions
+- **Benefit**: Reproducible installations, security transparency
 
-### 17.4 Supply Chain Security
-- **Target Behavior**: Minimal dependency attack surface
-- **Implementation**: Zero or minimal third-party dependencies
-- **Example**: No package manager attacks possible on core governance
-- **Benefit**: Enhanced security for security-sensitive governance
+### 21.4 Supply Chain Security
+- **Target Behavior**: Dependencies follow security best practices
+- **Implementation**: Use packages published at least 7 days ago, verify integrity
+- **Example**: Avoid latest/unbounded ranges, use specific version numbers
+- **Benefit**: Reduced supply chain attack risk
 
 **Success Criteria**:
-- Core governance uses only standard library
-- Third-party dependencies are optional
-- System can be deployed as single file
-- Minimal supply chain attack surface
-- Works in dependency-constrained environments
+- Required dependencies auto-installed via script or bat file
+- Minimal dependency set used
+- All dependencies clearly documented with version pinning
+- Dependencies follow security best practices
+- Reproducible and secure installation process
 
 ---
 
