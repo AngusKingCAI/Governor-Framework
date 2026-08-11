@@ -36,7 +36,7 @@ from hashlib import sha256
 from json import JSONDecodeError, dumps, loads
 from logging import FileHandler, Formatter, getLogger, Logger
 from pathlib import Path
-from re import compile as regex_compile
+from re import compile as regex_compile, IGNORECASE
 from threading import Lock
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
@@ -97,7 +97,7 @@ class ProtocolLayer:
     def validate_payload(self, payload: CanonicalPayload) -> bool:
         """Validate canonical payload structure."""
         for field in self.REQUIRED_FIELDS:
-            if not hasattr(payload, field) or getattr(payload, field) is None:
+            if not hasattr(payload, field) or getattr(payload, field) is None or getattr(payload, field) == "":
                 self.logger.error({
                     "File": "overseer.py",
                     "component": "ProtocolLayer",
@@ -135,9 +135,10 @@ class AuditLogger:
     """Structured JSONL logger with tamper-evident audit trail (Principle 9)."""
     
     SECRET_PATTERNS = {
-        'api_key': regex_compile(r'api[_-]?key["\']?\s*[:=]\s*["\']?([a-zA-Z0-9_\-]{20,})["\']?', regex_compile.IGNORECASE),
-        'password': regex_compile(r'password["\']?\s*[:=]\s*["\']?([^"\']{8,})["\']?', regex_compile.IGNORECASE),
-        'token': regex_compile(r'["\']?([a-zA-Z0-9_\-]{32,})["\']?', regex_compile.IGNORECASE),
+        'api_key': regex_compile(r'api[_-]?key["\']?\s*[:=]\s*["\']?([a-zA-Z0-9_\-]{16,})["\']?', IGNORECASE),
+        'password': regex_compile(r'password["\']?\s*[:=]\s*["\']?([^"\']{6,})["\']?', IGNORECASE),
+        'token': regex_compile(r'["\']?([a-zA-Z0-9_\-]{20,})["\']?', IGNORECASE),
+        'sk_': regex_compile(r'sk[_-]?[a-zA-Z0-9_\-]{16,}', IGNORECASE),
     }
     
     def __init__(self, log_dir: str, component: str):
@@ -198,6 +199,8 @@ class AuditLogger:
         """Log governance decision with tamper-evident protection."""
         # Redact secrets from decision context
         redacted_context = self._redact_secrets(decision.context)
+        # Also redact secrets from evaluated_rules
+        redacted_rules = self._redact_secrets(decision.evaluated_rules)
         
         log_entry = {
             "timestamp": decision.timestamp,
@@ -205,10 +208,10 @@ class AuditLogger:
             "policy_id": decision.policy_id,
             "rationale": decision.rationale,
             "context": redacted_context,
-            "evaluated_rules": decision.evaluated_rules
+            "evaluated_rules": redacted_rules
         }
         
-        # Compute hash with previous hash
+        # Compute hash with previous hash (hash of redacted data)
         with self.hash_lock:
             entry_hash = self._compute_hash(log_entry, self.previous_hash)
             log_entry["hash"] = entry_hash
@@ -226,7 +229,15 @@ class AuditLogger:
             for secret_type, pattern in self.SECRET_PATTERNS.items():
                 data = pattern.sub(f'{secret_type}: [REDACTED]', data)
         elif isinstance(data, dict):
-            return {k: self._redact_secrets(v) for k, v in data.items()}
+            # Also check dict keys for secret indicators
+            redacted_dict = {}
+            for k, v in data.items():
+                if any(indicator in k.lower() for indicator in ['api_key', 'password', 'token', 'secret', 'private_key']):
+                    # Redact values for secret keys
+                    redacted_dict[k] = '[REDACTED]'
+                else:
+                    redacted_dict[k] = self._redact_secrets(v)
+            return redacted_dict
         elif isinstance(data, list):
             return [self._redact_secrets(item) for item in data]
         return data
@@ -321,11 +332,14 @@ class ConfigManager:
     
     def _redact_secrets(self, config: Dict[str, Any]) -> Dict[str, Any]:
         """Redact secrets from configuration."""
-        secret_fields = ['password', 'api_key', 'token', 'secret']
-        for key, value in config.items():
-            if any(secret in key.lower() for secret in secret_fields):
-                config[key] = '[REDACTED]'
-        return config
+        redacted_dict = {}
+        for k, v in config.items():
+            if any(indicator in k.lower() for indicator in ['api_key', 'password', 'token', 'secret', 'private_key']):
+                # Redact values for secret keys
+                redacted_dict[k] = '[REDACTED]'
+            else:
+                redacted_dict[k] = v
+        return redacted_dict
     
     def get_adapter_config(self, adapter_name: str) -> Dict[str, Any]:
         """Get configuration for specific adapter."""
