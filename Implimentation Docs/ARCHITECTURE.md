@@ -1,8 +1,8 @@
 # Overseer Framework Architecture Principles
 
-**Version**: 3.0.0  
+**Version**: 4.0.0  
 **Date**: 2026-08-11  
-**Purpose**: Define the fundamental architectural principles for the Overseer hook-based AI agent governance system
+**Purpose**: Define the fundamental architectural principles and data flow for the Overseer hook-based AI agent governance system
 
 ## Product Summary
 
@@ -47,6 +47,197 @@ Overseer is designed for local installation - users install it locally and it ho
 **Default Behavior**
 
 When Overseer blocks an action based on policy, it creates a bypass menu for the user, allowing them to override the block when needed. System errors fail-closed without bypass menus.
+
+---
+
+## Architecture and Data Flow
+
+### File Structure
+
+```
+Overseer/
+├── Core/
+│   ├── overseer.py              # Central entry point and orchestrator
+│   ├── protocol/                # Protocol module - canonical data models
+│   │   ├── __init__.py
+│   │   ├── models.py            # Canonical payload definitions
+│   │   ├── validators.py        # Schema validation
+│   │   └── transformers.py      # Data transformation utilities
+│   ├── engine/                  # Engine module - policy evaluation
+│   │   ├── __init__.py
+│   │   ├── evaluator.py         # Policy evaluation logic
+│   │   ├── conflict_resolver.py # Conflict resolution strategies
+│   │   └── policy_loader.py     # Policy loading and hot-reload
+│   ├── state_machine/           # State Machine module - governance state
+│   │   ├── __init__.py
+│   │   ├── base.py              # Base state machine classes
+│   │   ├── emergency.py         # Emergency control states
+│   │   └── workflow.py          # Workflow orchestration states
+│   └── hook_handler/            # Hook Handler - single dynamic dispatcher
+│       ├── __init__.py
+│       └── dispatcher.py        # Dynamic hook dispatcher
+├── Adapter/
+│   ├── __init__.py
+│   ├── base.py                  # BaseAdapter class
+│   └── [AppName]-Adapter.py     # Framework-specific adapters (devin, claude, cursor, vscode)
+├── Config/
+│   └── config.json              # Configuration and adapter selection
+├── Actions/
+│   ├── __init__.py
+│   ├── base.py                  # BaseAction class
+│   ├── [PolicyName].py         # User policy execution logic
+│   └── Meta-Actions/
+│       └── [MetaRuleName].py    # Meta rule enforcement
+├── Rules/
+│   ├── [PolicyName].json        # User policy definitions
+│   └── Meta-Rules/
+│       └── [MetaRuleName].json  # Meta rule definitions
+├── Logs/                        # Layer-specific JSONL log files
+└── Tests/                       # Test suites
+```
+
+### Data Flow
+
+**Complete request flow from hook to action:**
+
+```
+1. Hook fires (e.g., Devin CLI PreToolUse)
+   ↓
+2. Overseer/overseer.py (entry point)
+   - Receives hook event name and event data
+   - Logs initialization
+   ↓
+3. Config/config.json
+   - Reads adapter name (e.g., "devin")
+   - Logs configuration loaded
+   ↓
+4. Adapter/[AppName]-Adapter.py (dynamically loaded)
+   - Adapter loaded based on config
+   - Adapter provides: capabilities, transformations, hook support
+   - Logs adapter loaded
+   ↓
+5. Core/protocol/models.py
+   - Adapter transforms event to CanonicalPayload
+   - Protocol validates canonical structure
+   - Logs transformation and validation
+   ↓
+6. Core/engine/evaluator.py
+   - Engine evaluates policies against canonical payload
+   - Conflict resolver composes multiple policy decisions
+   - Logs policy evaluation and conflict resolution
+   ↓
+7. Core/state_machine/emergency.py
+   - State machine checks emergency halt status
+   - If emergency active, returns deny immediately
+   - Logs state check
+   ↓
+8. Core/hook_handler/dispatcher.py
+   - Single dynamic dispatcher coordinates hook execution
+   - Dispatcher parses input once, routes to appropriate handlers
+   - Logs hook dispatch
+   ↓
+9. Rules/[PolicyName].json
+   - Hook handler checks rules from rule files
+   - Determines if any rule is triggered
+   - Logs rule evaluation
+   ↓
+10. Actions/[PolicyName].py
+    - If rule triggered, execute corresponding action
+    - Action performs: Block, Warn, or Direct agent
+    - Logs action execution
+    ↓
+11. Return decision to CLI
+    - Block: exit code 2 with reason
+    - Allow: exit code 0 with reason
+```
+
+### Module Responsibilities
+
+**Overseer (Core/overseer.py)**
+- Entry point for all hook events
+- Orchestrates between modules
+- Dynamic adapter loading based on config
+- Coordinates data flow through system
+- Logs orchestration events
+
+**Adapter (Adapter/[AppName]-Adapter.py)**
+- CLI-specific event transformation
+- Capability discovery and declaration
+- Provides transformation logic to Protocol
+- Dynamically loaded based on config
+- Zero CLI-specific assumptions in core (Principle 1)
+
+**Protocol (Core/protocol/)**
+- Canonical data model definitions (CanonicalPayload, GovernanceDecision)
+- Schema validation for canonical payloads
+- Data transformation utilities
+- Version management for protocol evolution
+- Completely independent of adapter implementations
+
+**Engine (Core/engine/)**
+- Policy evaluation logic
+- Policy loading and hot-reload
+- Conflict resolution strategies (deny_overrides, allow_overrides, priority_first_match)
+- Decision composition and attribution
+- Stateless and deterministic evaluation
+
+**State Machine (Core/state_machine/)**
+- Emergency control states (NORMAL, HALT_NONCRITICAL, HALT_ALL, EMERGENCY)
+- Workflow orchestration states
+- Session state management
+- State transition audit logging
+- File-system persistence for emergency state
+
+**Hook Handler (Core/hook_handler/)**
+- Single dynamic dispatcher per event type
+- Coordinates hook execution
+- Priority-based ordering
+- Per-hook timeout configuration
+- Fail-closed for security, fail-open for observability
+
+**Rules (Rules/[PolicyName].json)**
+- Declarative policy definitions
+- JSON-based rule conditions and actions
+- Versioned policy files
+- Meta rules for policy governance
+
+**Actions (Actions/[PolicyName].py)**
+- Policy execution logic
+- Block, Warn, or Direct agent enforcement
+- User policy implementations
+- Meta rule enforcement
+
+### Key Architectural Principles
+
+**Modular Independence**
+- Each module has single responsibility
+- Minimal coupling between modules
+- Clear interfaces between layers
+- Independent testing possible
+
+**Dynamic Loading**
+- Adapters loaded dynamically based on config
+- No hardcoded CLI knowledge in core
+- Adding new adapters requires config change only
+- Core adapts to adapter capabilities
+
+**Zero External Dependencies**
+- Core modules use only Python standard library
+- Adapter dependencies optional and documented
+- No cloud service dependencies
+- Local installation and execution
+
+**Fail-Closed Enforcement**
+- Emergency state checked before every action
+- Governance errors result in deny
+- System errors fail-closed without bypass
+- Security-first approach
+
+**Comprehensive Logging**
+- Every layer logs to layer-specific JSONL files
+- Structured log format for machine readability
+- Tamper-evident audit trails
+- State transition history for reconstruction
 
 ---
 

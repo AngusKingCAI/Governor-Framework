@@ -48,5 +48,6 @@ A framework-agnostic AI agent governance system for controlling tool usage, enfo
 ### Workflows
 - **[IMPLEMENTATION_WORKFLOW.md](./Workflows/IMPLEMENTATION_WORKFLOW.md)**: Development workflow for new features and components with TDD enforcement
 - **[FIX_WORKFLOW.md](./Workflows/FIX_WORKFLOW.md)**: Systematic workflow for addressing external review findings, security issues, and quality improvements
+- **[RESEARCH_WORKFLOW.md](./Workflows/RESEARCH_WORKFLOW.md)**: Documentation refinement workflow through iterative hyper-specific research to make documentation implementation-ready
 
 

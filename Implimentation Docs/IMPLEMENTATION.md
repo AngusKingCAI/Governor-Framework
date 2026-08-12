@@ -17,15 +17,29 @@ This document provides implementation-specific guidance for building the Oversee
 ```
 Overseer/
 ├── Core/
-│   ├── overseer.py              # Central governance hub
-│   ├── protocol.py              # Protocol layer definitions
-│   └── Hook-Handlers/           # Hook implementation handlers
-│       └── Devin                # Specific CLI folder    
-│           └── [HookName].py        # Specific hook implementations
+│   ├── overseer.py              # Central entry point and orchestrator
+│   ├── protocol/                # Protocol module - canonical data models
+│   │   ├── __init__.py
+│   │   ├── models.py            # Canonical payload definitions
+│   │   ├── validators.py        # Schema validation
+│   │   └── transformers.py      # Data transformation utilities
+│   ├── engine/                  # Engine module - policy evaluation
+│   │   ├── __init__.py
+│   │   ├── evaluator.py         # Policy evaluation logic
+│   │   ├── conflict_resolver.py # Conflict resolution strategies
+│   │   └── policy_loader.py     # Policy loading and hot-reload
+│   ├── state_machine/           # State Machine module - governance state
+│   │   ├── __init__.py
+│   │   ├── base.py              # Base state machine classes
+│   │   ├── emergency.py         # Emergency control states
+│   │   └── workflow.py          # Workflow orchestration states
+│   └── hook_handler/            # Hook Handler - single dynamic dispatcher
+│       ├── __init__.py
+│       └── dispatcher.py        # Dynamic hook dispatcher
 ├── Adapter/
 │   ├── __init__.py
 │   ├── base.py                  # BaseAdapter class
-│   └── [AppName]-Adapter.py     # Framework-specific adapters
+│   └── [AppName]-Adapter.py     # Framework-specific adapters (devin, claude, cursor, vscode)
 ├── Config/
 │   └── config.json              # Configuration and adapter selection
 ├── Actions/
@@ -48,7 +62,10 @@ Overseer/
 - **Policy Files**: `[PolicyName].json` (e.g., `file-deletion-protection.json`)
 - **Execution Logic**: `[PolicyName].py` (matches policy file name)
 - **Meta Rules**: `[MetaRuleName].py` (e.g., `policy-format-validator.py`)
-- **Hook Handlers**: `[HookName].py` (e.g., `PreToolUse.py`, `PostToolUse.py`)
+- **Protocol**: `models.py`, `validators.py`, `transformers.py` (within protocol module)
+- **Engine**: `evaluator.py`, `conflict_resolver.py`, `policy_loader.py` (within engine module)
+- **State Machine**: `base.py`, `emergency.py`, `workflow.py` (within state_machine module)
+- **Hook Handler**: `dispatcher.py` (single dynamic dispatcher)
 
 ---
 
@@ -401,65 +418,98 @@ def pre_tool_use_hook(event: Dict[str, Any]) -> str:
 
 ### Hook Handler Pattern
 
-Hook handlers are dedicated modules in `Overseer/Core/Hook-Handlers/` that implement specific hook logic. This provides better organization and modularity for hook implementations.
+Overseer uses a single dynamic dispatcher per event type rather than multiple specific hook handlers. This provides better performance (parse once, shared work) and centralized conflict resolution.
 
 ```python
-# Overseer/Core/Hook-Handlers/PreToolUse.py
-from typing import Dict, Any
-from Overseer.Core.protocol import ProtocolPayload
+# Overseer/Core/hook_handler/dispatcher.py
+from typing import Dict, Any, List, Callable
+from Overseer.Core.protocol.models import CanonicalPayload
 import logging
 from datetime import datetime
 
-class PreToolUseHandler:
-    """Handler for PreToolUse hook events."""
+class HookDispatcher:
+    """Single dynamic dispatcher for hook coordination."""
     
-    def __init__(self, overseer):
-        """Initialize the handler with Overseer instance."""
-        self.overseer = overseer
-        self.logger = logging.getLogger("Overseer.HookHandlers.PreToolUse")
+    def __init__(self, engine, state_machine):
+        """Initialize dispatcher with engine and state machine."""
+        self.engine = engine
+        self.state_machine = state_machine
+        self.logger = logging.getLogger("Overseer.HookHandler.Dispatcher")
+        self.handlers: Dict[str, List[Callable]] = {}
     
-    def handle(self, event: Dict[str, Any]) -> str:
+    def register_handler(self, hook_type: str, handler: Callable, priority: int = 50):
+        """Register a handler for a specific hook type with priority."""
+        if hook_type not in self.handlers:
+            self.handlers[hook_type] = []
+        self.handlers[hook_type].append((priority, handler))
+        # Sort by priority (higher numbers first)
+        self.handlers[hook_type].sort(key=lambda x: x[0], reverse=True)
+    
+    def dispatch(self, hook_type: str, event: Dict[str, Any]) -> str:
         """
-        Handle PreToolUse event.
+        Dispatch hook event through registered handlers.
         
         Args:
+            hook_type: Type of hook event (e.g., "PreToolUse")
             event: Raw event data from adapter
             
         Returns:
             Governance decision ("allow", "deny", "modify")
         """
         try:
-            # Transform to canonical payload
-            canonical = self._transform_event(event)
+            # Parse input once
+            parsed_event = self._parse_event(event)
             
-            # Evaluate policies
-            decision = self.overseer.evaluate_policies(canonical)
+            # Check emergency state first
+            emergency_state = self.state_machine.check_emergency_state()
+            if emergency_state != "NORMAL":
+                self.logger.warning({
+                    "File": "dispatcher.py",
+                    "component": "HookHandler",
+                    "Time": datetime.utcnow().isoformat(),
+                    "data": {
+                        "event": "emergency_halt",
+                        "hook_type": hook_type,
+                        "emergency_state": emergency_state
+                    }
+                })
+                return "deny"
             
-            # Log decision
-            self._log_decision(decision, canonical)
+            # Execute handlers in priority order
+            if hook_type not in self.handlers:
+                return "allow"  # Default allow if no handlers
             
-            return decision.decision
+            for priority, handler in self.handlers[hook_type]:
+                decision = handler(parsed_event)
+                if decision == "deny":
+                    # DENY short-circuits immediately
+                    self._log_decision(hook_type, decision, priority)
+                    return "deny"
+            
+            # If no deny, return allow
+            self._log_decision(hook_type, "allow", None)
+            return "allow"
             
         except Exception as e:
-            self.logger.error(f"PreToolUse handler error: {e}")
+            self.logger.error(f"Hook dispatcher error: {e}")
             return "deny"  # Fail-closed
     
-    def _transform_event(self, event: Dict[str, Any]) -> ProtocolPayload:
-        """Transform event to canonical payload."""
-        # Implementation depends on adapter
-        pass
+    def _parse_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
+        """Parse and normalize event data once."""
+        # Implementation for event parsing
+        return event
     
-    def _log_decision(self, decision, canonical: ProtocolPayload):
-        """Log governance decision."""
+    def _log_decision(self, hook_type: str, decision: str, priority: int):
+        """Log hook decision."""
         self.logger.info({
-            "File": "PreToolUse.py",
+            "File": "dispatcher.py",
             "component": "HookHandler",
             "Time": datetime.utcnow().isoformat(),
             "data": {
-                "event": "pre_tool_use_decision",
-                "decision": decision.decision,
-                "action_type": canonical.action_type,
-                "resource": canonical.resource
+                "event": "hook_dispatch",
+                "hook_type": hook_type,
+                "decision": decision,
+                "priority": priority
             }
         })
 ```
