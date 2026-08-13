@@ -1,6 +1,8 @@
 # Software Engineering Principles
 
-This document defines the core software engineering principles that guide all Overseer Framework development. These principles are based on industry best practices and research to ensure maintainable, scalable, and robust software systems.
+**Version**: 1.0.0
+**Date**: 2026-08-12
+**Purpose**: Define the core software engineering principles that guide all Overseer Framework development. These principles are based on industry best practices and research to ensure maintainable, scalable, and robust software systems.
 
 ## Component Modularity
 

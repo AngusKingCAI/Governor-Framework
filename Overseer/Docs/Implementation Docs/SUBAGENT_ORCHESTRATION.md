@@ -1,6 +1,8 @@
 # Subagent Orchestration Guidelines
 
-This document provides detailed guidance for implementing the Overseer Framework workflow using modern AI agent subagent capabilities for parallel execution and complex orchestration.
+**Version**: 1.0.0
+**Date**: 2026-08-12
+**Purpose**: Provide detailed guidance for implementing the Overseer Framework workflow using modern AI agent subagent capabilities for parallel execution and complex orchestration.
 
 ## When to Use Parallel Execution
 

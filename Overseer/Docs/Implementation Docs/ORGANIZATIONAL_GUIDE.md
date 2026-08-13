@@ -83,6 +83,7 @@ regulatory_frameworks:
 - **Policy Development**: Develop organizational AI policy that Overseer will enforce
 - **Policy Communication**: Communicate AI policy to all stakeholders
 - **Policy Review**: Regularly review and update AI policy
+- **Meta Rules Implementation**: Implement meta rules for policy quality validation per ARCHITECTURE.md Principle 4.3. Meta rules validate policy format, structure, and prevent contradictory policies from being loaded. See IMPLEMENTATION.md lines 265-300 for meta rule implementation patterns.
 
 **Implementation**:
 ```yaml

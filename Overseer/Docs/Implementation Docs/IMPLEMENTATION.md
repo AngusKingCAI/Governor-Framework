@@ -224,28 +224,28 @@ class DevinAdapter(BaseAdapter):
 }
 ```
 
-### Python Execution Logic with Policy Caching
+### Python Execution Logic with Plugin-Based Policy Caching
+
+Per ARCHITECTURE.md Principle 3 (Small Reusable Kernel), policy caching is provided through a plugin architecture rather than being embedded in core execution logic. This allows adapters to choose caching strategies based on their needs.
 
 ```python
 # file-deletion-protection.py
 from Overseer.Actions.base import BaseAction
 from typing import Dict, Any
 import json
-from functools import lru_cache
 
 class FileDeletionProtection(BaseAction):
     """Enforce file deletion protection policy."""
     
-    @lru_cache(maxsize=1)
     def _load_policy(self):
-        """Load and cache policy configuration (called once at startup)."""
+        """Load policy configuration (caching handled by plugin if configured)."""
         with open("Overseer/Rules/file-deletion-protection.json") as f:
             return json.load(f)
     
     def execute(self, event: Dict[str, Any]) -> str:
         """Evaluate file deletion protection."""
         
-        # Load policy configuration (cached after first call)
+        # Load policy configuration (caching handled by plugin)
         policy = self._load_policy()
         
         # Check if resource is in protected paths
@@ -256,6 +256,27 @@ class FileDeletionProtection(BaseAction):
             return "deny"
         
         return "allow"
+```
+
+**Policy Caching Plugin (Optional Enhancement)**:
+
+For performance-critical deployments, implement a policy caching plugin:
+
+```python
+# Overseer/Plugins/policy_cache.py
+from Overseer.Plugins.base import BasePlugin
+from functools import lru_cache
+
+class PolicyCachePlugin(BasePlugin):
+    """Plugin for policy caching with configurable strategies."""
+    
+    def __init__(self, cache_size: int = 1):
+        self.cache_size = cache_size
+    
+    @lru_cache(maxsize=1)
+    def cached_load(self, load_func):
+        """Cache policy load results."""
+        return load_func()
 ```
 
 ---

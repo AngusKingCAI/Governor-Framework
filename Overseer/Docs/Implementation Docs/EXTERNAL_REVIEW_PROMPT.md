@@ -1,19 +1,23 @@
 # External AI Review Prompt - Overseer Framework
 
+**Version**: 1.0.0
+**Date**: 2026-08-12
+**Purpose**: External AI review prompt with websearch verification requirements for the Overseer Framework.
+
 ## Repository Information
 
-**Repository**: Governor-Framework
-**GitHub URL**: https://github.com/AngusKingCAI/Governor-Framework.git
-**Clone Command**: `git clone https://github.com/AngusKingCAI/Governor-Framework.git`
+**Repository**: Overseer Framework
+**GitHub URL**: https://github.com/AngusKingCAI/Overseer Framework.git
+**Clone Command**: `git clone https://github.com/AngusKingCAI/Overseer Framework.git`
 
 ## Clone Instructions
 
 ```bash
 # Clone the repository
-git clone https://github.com/AngusKingCAI/Governor-Framework.git
+git clone https://github.com/AngusKingCAI/Overseer Framework.git
 
 # Navigate to the repository
-cd Governor-Framework
+cd Overseer Framework
 
 # Review the structure
 ls -la
@@ -246,4 +250,4 @@ Provide your review in markdown format with clear sections for each assessment a
 **Review Start Date**: [Date]
 **Review Completion Date**: [Date]
 **Reviewer**: [External AI]
-**Repository**: https://github.com/AngusKingCAI/Governor-Framework.git
+**Repository**: https://github.com/AngusKingCAI/Overseer Framework.git
