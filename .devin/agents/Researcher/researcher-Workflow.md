@@ -561,6 +561,28 @@ Final review of the research report for accuracy, completeness, and quality.
 
 **Exit Condition**: Research report passes final verification and is ready for delivery.
 
+### 17. SAVE_RESEARCH_REPORT
+Automatically save the research report to the appropriate location based on research scope.
+
+**Save Location Logic**:
+- **General Research** (framework-agnostic, industry research, best practices): Save to `.devin/Research Docs/`
+- **Project-Specific Research** (investigation of specific codebase, project documentation): Save to `[Project Folder]/Docs/Research Docs/`
+
+**File Naming Convention**:
+- Use descriptive, specific filename based on subject matter
+- Format: `[Subject_Matter]_Research.md`
+- Example: `AI_Agent_Harness_Memory_Architectures_Research.md`
+- Use underscores instead of spaces, capitalize major words
+
+**Save Process**:
+1. Determine research scope (general vs. project-specific)
+2. Generate appropriate filename based on research subject
+3. Create directory structure if it doesn't exist
+4. Save complete research report with all sections
+5. Confirm successful save with file path
+
+**Exit Condition**: Research report is saved to appropriate location with descriptive filename.
+
 ## Output Format
 
 Provide research findings in the following structured format:
